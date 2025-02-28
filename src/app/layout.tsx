@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-        <Providers>
+      <Providers>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
@@ -41,12 +41,11 @@ export default function RootLayout({
               <div className="lg:-ml-[16rem]">
                 {/* <Footer /> */}
               </div>
-              <Toaster position="top-right" richColors/>
-              {/* <ToastContainer /> */}
+              <Toaster position="top-right" richColors duration={2000} />
             </main>
           </SidebarProvider>
         </body>
-    </Providers>
-      </html>
+      </Providers>
+    </html>
   );
 }
