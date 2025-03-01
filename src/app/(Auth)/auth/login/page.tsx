@@ -2,9 +2,8 @@
 
 import { Input } from "@/components/ui/input";
 import { useLoginMutation } from "@/redux/api/Auth/loginApi";
-import { setUser, TUser } from "@/redux/features/Auth/authSlice";
+import { setUser } from "@/redux/features/Auth/authSlice";
 import { useAppDispatch } from "@/redux/hooks";
-import { verifyToken } from "@/utils/verifyToken";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";

@@ -19,6 +19,8 @@ export default function HomeDashboard() {
     // Get user role if token exists
     const userRole = userToken ? (verifyToken(userToken) as TUser)?.role : "";
 
+ 
+
     // Early return based on user role
     if (userRole === "student") return <StudentDashboard />;
     if (userRole === "teacher") return <TeacherDashboard />;
