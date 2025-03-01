@@ -8,12 +8,12 @@ export type TUser = {
 };
 
 type TAuthState = {
-  user: TUser | null;
+  // user: TUser | null;
   token: string | null;
 };
 
 const initialState: TAuthState = {
-  user: null,
+  // user: null,
   token: null,
 };
 
@@ -22,11 +22,11 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action: PayloadAction<TAuthState>) => {
-      state.user = action.payload.user;
+      // state.user = action.payload.user;
       state.token = action.payload.token;
     },
     logout: (state) => {
-      state.user = null;
+      // state.user = null;
       state.token = null;
     },
   },

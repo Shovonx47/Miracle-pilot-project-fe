@@ -1,101 +1,85 @@
-// middleware.ts
 import { jwtDecode } from "jwt-decode";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-// Define the public routes (no authentication required)
-const AuthRoutes = ["/", "/register", "/add-details"]; // Public routes
+// Define public routes that do not require authentication
+const AuthRoutes = ["/auth/login", "/auth/register", "/auth/add-details"];
 
-// Define role-based private routes using regular expressions
+// Define role-based protected routes
 const roleBasedPrivateRoutes = {
-  user: [
-    "/profile",  // Profile route for user
-    "/dashboard", // Dashboard route for user
-  ],
-  admin: [
-    "/admin", // Admin area (admin dashboard, settings, etc.)
-    "/student/add-student", // Admin access to adding students
-    "/student/all-students", // Admin access to all students
-  ],
-  super_admin: [
-    "/super-admin", // Super admin area
-    "/student/add-student", // Super admin access to adding students
-    "/student/all-students", // Super admin access to all students
-    "/admin", // Super admin can access the admin area as well
-  ],
-};
-
-// Helper function to build matcher patterns from role-based routes
-const buildMatcher = (routes: string[]) => {
-  return routes.map(route => `${route}(/.*)?`); // Use regex to match the base route and any sub-path
+    user: ["/", "/profile", "/dashboard"],
+    student: ["/", "/admin", "/student/add-student", "/student/all-students"],
+    teacher: ["/", "/admin", "/student/add-student", "/student/all-students"],
+    staff: ["/", "/admin", "/student/add-student", "/student/all-students"],
+    admin: ["/", "/admin", "/student/add-student", "/student/all-students"],
+    super_admin: [],
 };
 
 type Role = keyof typeof roleBasedPrivateRoutes;
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+    const { pathname } = request.nextUrl;
 
-  // Get the access token (refreshToken)
-  const accessToken = request.cookies.get("refreshToken")?.value ?? null;
-
-  // If there's no token and the route is public, allow access
-  if (!accessToken) {
+    // Allow public routes without authentication
     if (AuthRoutes.includes(pathname)) {
-      return NextResponse.next();
-    } else {
-      // If there's no token and it's not a public route, redirect to login page
-      return NextResponse.redirect(new URL("/", request.url));
+        console.log("Public route, allowing access.");
+        return NextResponse.next();
     }
-  }
 
-  let decodedData = null;
-  try {
-    decodedData = jwtDecode(accessToken) as any;
-  } catch (error) {
-    // If the token is invalid or expired, redirect to login
-    return NextResponse.redirect(new URL("/", request.url));
-  }
+    // Get the token from cookies
+    const accessToken = request.cookies.get("refreshToken")?.value ?? null;
 
-  const role = decodedData?.role as Role;
+    if (!accessToken) {
+       
+        return NextResponse.redirect(new URL("/auth/login", request.url));
+    }
 
-  // If the role doesn't exist or is invalid, redirect to login
-  if (!role || !roleBasedPrivateRoutes[role]) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
+    let decodedData = null;
+    try {
+        decodedData = jwtDecode(accessToken) as any;
+       
+    } catch (error) {
+       
+        return NextResponse.redirect(new URL("/auth/login", request.url));
+    }
 
-  // Build matcher routes for the role
-  const allowedRoutes = buildMatcher(roleBasedPrivateRoutes[role]);
+    const role = decodedData?.role as Role;
+  
 
-  // Check if the current path is in the allowed routes for the role
-  const isAllowed = allowedRoutes.some((route) => pathname.match(new RegExp(route)));
+    // If the user is super_admin, allow access to all routes
+    if (role === "super_admin") {
+        console.log("Super admin, allowing access to all routes.");
+        return NextResponse.next();
+    }
 
-  // If the route is allowed for the user role, proceed; otherwise, redirect to login
-  if (isAllowed) {
-    return NextResponse.next();
-  }
+    if (!role || !roleBasedPrivateRoutes[role]) {
+        console.log("Role is not valid, redirecting.");
+        return NextResponse.redirect(new URL("/forbiddenPage", request.url));
+    }
 
-  // If none of the conditions match, redirect to login
-  return NextResponse.redirect(new URL("/forbiddenPage", request.url));
+    const allowedRoutes = roleBasedPrivateRoutes[role];
+    const isAllowed = allowedRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+
+    if (isAllowed) {
+        return NextResponse.next();
+    }
+    return NextResponse.redirect(new URL("/forbiddenPage", request.url));
 }
 
+
 export const config = {
-  matcher: [
-    "/login",
-    "/register",
-    "/add-details", // Public add-details route
-    "/profile(/.*)?", // Match /profile and all sub-paths
-    "/dashboard(/.*)?", // Match /dashboard and all sub-paths
-    "/admin(/.*)?", // Match /admin and all sub-paths
-    "/super-admin(/.*)?", // Match /super-admin and all sub-paths
-    "/student/add-student", // Protect the student add page
-    "/student/all-students", // Protect student all-students page
-    "/student/edit-student", // Protect student edit page
-    "/teacher/add-teacher", // Protect teacher add page
-    "/teacher/edit-teacher", // Protect teacher edit page
-    "/staff/add-staff", // Protect staff add page
-    "/staff/edit-staff", // Protect staff edit page
-    "/human-resource/hr-dashboard", // Protect HR dashboard page
-    "/exam-schedule/edit-exam-schedule", // Protect exam schedule edit page
-    // Add any other routes that need to be protected
-  ],
+    matcher: [
+        "/",
+        "/admin",
+        "/super-admin",
+        "/student/add-student",
+        "/student/all-students",
+        "/student/edit-student",
+        "/teacher/add-teacher",
+        "/teacher/edit-teacher",
+        "/staff/add-staff",
+        "/staff/edit-staff",
+        "/human-resource/hr-dashboard",
+        "/exam-schedule/edit-exam-schedule",
+    ],
 };
