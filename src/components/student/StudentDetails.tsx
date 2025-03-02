@@ -15,6 +15,10 @@ import Avatar from '@/assets/avatars/3d_avatar_3.png';
 import Link from 'next/link';
 import { useGetSingleStudentQuery } from '@/redux/api/Student/studentApi';
 import LoadingSpinner from '@/components/Loader';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { verifyToken } from '@/utils/verifyToken';
+import { TUser } from '@/redux/features/Auth/authSlice';
 
 
 interface SiblingsDetailsProps {
@@ -28,18 +32,33 @@ interface SiblingsDetailsProps {
 
 
 export default function StudentDetails() {
-    const id = "67a340bdaa72d2787d7478ee"
+    const userToken = useSelector((state: RootState) => state?.auth?.token);
+
+    // Get user role if token exists
+    let email = "";
+    if (userToken) {
+        const userId = (verifyToken(userToken) as TUser);
+        email = userId?.email ?? ""; // Fallback to empty string if no id found
+    }
+
+    // // Only make the query if `id` is valid
 
 
-    const { data: singleStudent, isLoading } = useGetSingleStudentQuery(id)
+
+    const { data: singleStudent, isLoading } = useGetSingleStudentQuery( email );
+
+
+
+
 
 
     const studentData = singleStudent?.data
 
     const documentsData = [
-        { name:  studentData?.birthCertificate },
-        { name:  studentData?.transferCertificate }
+        { name: studentData?.birthCertificate },
+        { name: studentData?.transferCertificate || "No Transfer Certificate Provided" }, // Use fallback if not available
     ];
+    
 
     const tabs = [
         'Student Details',
@@ -55,7 +74,7 @@ export default function StudentDetails() {
     };
 
     const addressesData = {
-        current:  studentData?.presentAddress,
+        current: studentData?.presentAddress,
         permanent: studentData?.permanentAddress
     };
 
@@ -76,7 +95,7 @@ export default function StudentDetails() {
     };
 
 
-    
+
 
 
 

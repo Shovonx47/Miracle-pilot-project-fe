@@ -1,0 +1,1 @@
+export type Role = "admin" | "teacher" | "accountant" | "student" | "super_admin" | "staff";
