@@ -25,5 +25,7 @@ export const itemPermissions: Record<Role, { [key: string]: string[] }> = {
     Accountant: ["add", "edit", "view"],
     "Create Class Routine": ["add", "edit"],
     "Off Day": ["add", "edit"],
+    Payroll: ["add", "edit"],
+    Admin: ["add", "edit"],
   },
 };

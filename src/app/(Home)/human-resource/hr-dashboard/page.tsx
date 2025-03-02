@@ -56,9 +56,14 @@ export default function Page() {
       </div>
       <MorningNotification name="Najmus Sakib" />
       <DashboardMetrics />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-6">
-        <Schedule />
-        <DashboardStats />
+      {/* Update the grid layout structure */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+        <div className="w-full">
+          <Schedule />
+        </div>
+        <div className="w-full">
+          <DashboardStats />
+        </div>
         <div className="flex flex-col gap-6">
           <QuickLinksDashboard />
           <ClassRoutine />
