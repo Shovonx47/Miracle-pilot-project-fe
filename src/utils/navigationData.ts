@@ -86,5 +86,31 @@ export const navigationData = {
           { title: "Edit Off Day Setup", url: "/off-day-setup/edit-off-day", permission: "edit" },
         ],
       },
+      {
+        title: "Admin",
+        url: "#",
+        icon: GraduationCap,
+        items: [
+          {
+            title: "Class Routine",
+            url: "/admin/class-routine",
+          },
+          {
+            title: "Class Timings",
+            url: "/admin/class-timings",
+          },
+        ],
+      },
+      {
+        title: "Payroll",
+        url: "#",
+        icon: GraduationCap,
+        items: [
+          {
+            title: "Employee Payroll",
+            url: "/payroll/employee-payroll",
+          },
+        ],
+      },
     ],
   };

@@ -5,6 +5,6 @@ export const roleBasedAccess: Record<Role, string[]> = {
     teacher: ["Students", "Teacher", "Class Routine", "Exam Schedule"],
     accountant: ["Accountant"],
     student: ["Students", "Exam Schedule", "Off Day", "Class Routine"],
-    super_admin: ["Students", "Teacher", "Staff", "Human Resource", "Accountant", "Class Routine", "Exam Schedule", "Off Day"],
+    super_admin: ["Students", "Teacher", "Staff", "Human Resource", "Accountant", "Class Routine", "Exam Schedule", "Off Day", "Admin", "Payroll"],
     staff: ["Staff"], // Staff should only see its own section
   };
