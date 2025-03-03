@@ -1,7 +1,11 @@
 "use client";
 import React, { useState } from 'react';
 import Image from 'next/image';
+<<<<<<< HEAD
+import Avatar from '@/assets/avatars/oe.png';
+=======
 import Avatar from '@/assets/avatars/ce.png';
+>>>>>>> 3332584186548f535ef95ecf0b96b0c795487323
 
 // Define types for our data structure
 interface ClassSession {
@@ -156,7 +160,11 @@ const ScheduleGrid: React.FC = () => {
         {filteredSchedule.map((day, index) => (
           <div key={index} className="min-w-[200px] flex-1 bg-[#FAFAFA]">
             <div className="p-2 font-medium text-sm sticky top-0 bg-[#FAFAFA]">{day.day}</div>
+<<<<<<< HEAD
+            
+=======
 
+>>>>>>> 3332584186548f535ef95ecf0b96b0c795487323
             {day.sessions.length > 0 ? (
               day.sessions.map((session, sessionIndex) => (
                 <div 
@@ -165,7 +173,11 @@ const ScheduleGrid: React.FC = () => {
                 >
                   <div className="text-sm text-gray-600">{session.time}</div>
                   <div className="text-xs">Subject: {session.subject}</div>
+<<<<<<< HEAD
+                  
+=======
 
+>>>>>>> 3332584186548f535ef95ecf0b96b0c795487323
                   <div className="mt-2 bg-white p-2 rounded-lg">
                     <div className="flex items-center">
                       <div className="w-8 h-8 rounded-lg overflow-hidden mr-2">

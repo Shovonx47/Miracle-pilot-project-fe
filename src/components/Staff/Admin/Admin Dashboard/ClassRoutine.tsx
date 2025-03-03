@@ -43,11 +43,14 @@ const ClassRoutine = () => {
 
       <div className="space-y-4">
         {routineData.map((item, index) => (
-          <div key={index} className="flex items-center space-x-3">
+          <div 
+            key={index} 
+            className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg"
+          >
             <img
               src={item.imageUrl}
               alt="Profile"
-              className="w-8 h-8 rounded object-cover" // Changed from rounded-full to rounded
+              className="w-8 h-8 rounded object-cover"
             />
             <div className="flex-1">
               <div className="flex items-center space-x-2 mb-1">
