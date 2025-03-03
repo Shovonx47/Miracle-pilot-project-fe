@@ -1,8 +1,9 @@
-import React from 'react';
+"use client";
+import React, { useState } from 'react';
 import { Check } from 'lucide-react';
 
 const TodoList = () => {
-  const todos = [
+  const [todos, setTodos] = useState([
     {
       id: 1,
       task: "Join Sports Program",
@@ -33,7 +34,19 @@ const TodoList = () => {
       time: "07:00 PM",
       status: "Yet To Start"
     }
-  ];
+  ]);
+
+  const toggleTodoStatus = (id: number) => {
+    setTodos(todos.map(todo => {
+      if (todo.id === id) {
+        return {
+          ...todo,
+          status: todo.status === 'Completed' ? 'Yet To Start' : 'Completed'
+        };
+      }
+      return todo;
+    }));
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -62,11 +75,14 @@ const TodoList = () => {
           <div key={todo.id} className="py-3 first:pt-0 last:pb-0">
             <div className="flex items-center gap-3">
               <div className="flex-shrink-0">
-                <div className={`w-5 h-5 rounded border ${
-                  todo.status === 'Completed'
-                    ? 'bg-blue-600 border-blue-600'
-                    : 'border-gray-300'
-                } flex items-center justify-center cursor-pointer`}>
+                <div 
+                  onClick={() => toggleTodoStatus(todo.id)}
+                  className={`w-5 h-5 rounded border ${
+                    todo.status === 'Completed'
+                      ? 'bg-blue-600 border-blue-600'
+                      : 'border-gray-300'
+                  } flex items-center justify-center cursor-pointer hover:border-blue-400 transition-colors`}
+                >
                   {todo.status === 'Completed' && (
                     <Check className="h-4 w-4 text-white" />
                   )}

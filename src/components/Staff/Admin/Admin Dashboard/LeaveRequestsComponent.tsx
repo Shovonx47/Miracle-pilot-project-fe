@@ -63,7 +63,7 @@ const LeaveRequestsComponent: React.FC = () => {
       
       <div className="space-y-3">
         {leaveRequests.map((request) => (
-          <div key={request.id} className="p-3 bg-gray-50 rounded-lg">
+          <div key={request.id} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
             <div className="flex items-center">
               <div className="relative mr-3">
                 <img 
