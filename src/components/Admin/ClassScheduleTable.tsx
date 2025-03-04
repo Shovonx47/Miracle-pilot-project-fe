@@ -215,8 +215,5 @@ const ClassScheduleTable = () => {
   );
 };
 
-<<<<<<< HEAD
+
 export default ClassScheduleTable;
-=======
-export default ClassScheduleTable;
->>>>>>> 3332584186548f535ef95ecf0b96b0c795487323

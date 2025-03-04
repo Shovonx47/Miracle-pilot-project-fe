@@ -27,7 +27,7 @@ const Login = () => {
                 dispatch(setUser({ token: response.data }));
                 toast.success(response.message);
                 router.push("/");
-                reset()
+                // reset()
             } else if (response.success === false && response.errorSources) {
                 const errorMessage = response.errorSources.map((err: any) => err.message).join(", ");
                 toast.error(errorMessage);
