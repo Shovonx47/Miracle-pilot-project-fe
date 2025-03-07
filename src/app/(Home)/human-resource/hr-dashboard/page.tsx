@@ -13,7 +13,7 @@ import NoticeBoard from "@/components/Staff/Admin/Admin Dashboard/NoticeBoard";
 import StudentActivity from "@/components/Staff/Admin/Admin Dashboard/StudentActivity";
 import TodoList from "@/components/Staff/Admin/Admin Dashboard/TodoList";
 
-export default function Page() {
+export default function HrDashboard() {
   return (
     <div className="p-6 md:p-8 lg:p-10">
       <div className="flex justify-between items-center mb-6">

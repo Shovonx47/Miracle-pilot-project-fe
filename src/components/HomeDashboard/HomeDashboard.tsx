@@ -6,6 +6,7 @@ import { TUser } from "@/redux/features/Auth/authSlice";
 import StudentDashboard from "@/app/(Home)/student/student-dashboard/page";
 import TeacherDashboard from "@/app/(Home)/teacher/teacher-dashboard/page";
 import { handleLogout } from "@/utils/logoutFunc";
+import HrDashboard from "@/app/(Home)/human-resource/hr-dashboard/page";
 
 
 export default function HomeDashboard() {
@@ -19,11 +20,12 @@ export default function HomeDashboard() {
     // Get user role if token exists
     const userRole = userToken ? (verifyToken(userToken) as TUser)?.role : "";
 
- 
+
 
     // Early return based on user role
     if (userRole === "student") return <StudentDashboard />;
     if (userRole === "teacher") return <TeacherDashboard />;
+    if (userRole === "super_admin" || userRole === "admin") return <HrDashboard />;
     if (userRole === "super_admin") return <div className="h-screen flex justify-center items-center bg-gray-100">
         <div className="text-center bg-white p-10 rounded-lg shadow-xl max-w-md w-full space-y-6">
             <h2 className="text-3xl font-semibold text-gray-800">Super Admin Dashboard</h2>

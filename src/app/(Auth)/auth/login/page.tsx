@@ -57,6 +57,7 @@ const Login = () => {
                     name="email"
                     control={control}
                     rules={{ required: "Email is required" }}
+                    defaultValue="faruk@gmail.com"
                     render={({ field, fieldState: { error } }) => (
                         <div>
                             <label className="block text-sm font-medium text-gray-900">Email</label>
@@ -76,6 +77,7 @@ const Login = () => {
                     name="password"
                     control={control}
                     rules={{ required: "Password is required" }}
+                     defaultValue="123456789"
                     render={({ field, fieldState: { error } }) => (
                         <div>
                             <label className="block text-sm font-medium text-gray-900">Password</label>

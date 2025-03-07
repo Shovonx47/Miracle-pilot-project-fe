@@ -29,22 +29,38 @@ export async function middleware(request: NextRequest) {
     // Get the token from cookies
     const accessToken = request.cookies.get("refreshToken")?.value ?? null;
 
+    // console.log(accessToken);
+
+    // const cookieHeader = request.headers.get("cookie") || "";
+
+    // console.log("Cookies in Middleware:", request.cookies.getAll());
+
+    // console.log("Raw Cookie Header:", cookieHeader);
+
+    // const cookies = new Map(
+    //     cookieHeader.split("; ").map((c) => c.split("=") as [string, string])
+    // );
+    // const accessToken = cookies.get("refreshToken");
+
+    // console.log("Extracted Token:", accessToken);
+
+
     if (!accessToken) {
-       
+
         return NextResponse.redirect(new URL("/auth/login", request.url));
     }
 
     let decodedData = null;
     try {
         decodedData = jwtDecode(accessToken) as any;
-       
+
     } catch (error) {
-       
+
         return NextResponse.redirect(new URL("/auth/login", request.url));
     }
 
     const role = decodedData?.role as Role;
-  
+
 
     // If the user is super_admin, allow access to all routes
     if (role === "super_admin") {
