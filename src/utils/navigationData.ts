@@ -44,12 +44,12 @@ export const navigationData = {
           { title: "All Staffs", url: "/staff/all-staff", permission: "view" },
         ],
       },
-      {
-        title: "Human Resource",
-        url: "#",
-        icon: Users,
-        items: [{ title: "HR Dashboard", url: "/human-resource/hr-dashboard", permission: "view" }],
-      },
+      // {
+      //   title: "Human Resource",
+      //   url: "#",
+      //   icon: Users,
+      //   items: [{ title: "HR Dashboard", url: "/human-resource/hr-dashboard", permission: "view" }],
+      // },
       {
         title: "Accountant",
         url: "#",
