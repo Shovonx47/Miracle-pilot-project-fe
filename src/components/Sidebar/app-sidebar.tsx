@@ -30,7 +30,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   if (userToken) {
     const user = verifyToken(userToken) as TUser;
-    userRole = user?.role
+    userRole = user?.role;
+    console.log("Current user role:", userRole);
   } else {
     userRole = "";
   }
@@ -57,6 +58,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       items: filterItems(section.items, section.title),
     }))
     .filter((section) => section.items.length > 0); // Remove empty sections
+
+  console.log("Filtered nav items:", filteredNavItems);
 
   return (
     <Sidebar collapsible="icon" side="left" variant="inset" {...props}>
