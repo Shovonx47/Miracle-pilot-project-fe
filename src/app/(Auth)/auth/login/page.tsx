@@ -79,7 +79,7 @@ const Login = () => {
                                 {...field}
                                 type="email"
                                 placeholder="Enter your email"
-                                className="mt-1 p-3 w-full rounded-lg bg-white/20 text-gray-900 placeholder-gray-800 focus:ring-2 focus:ring-gray-700 focus:outline-none"
+                                className="mt-1 p-3 w-full rounded-lg bg-white/20 text-gray-900 placeholder-gray-800 focus:ring-2 focus:ring-gray-700 focus:outline-none border-black"
                             />
                             {error && <p className="text-red-400 text-sm mt-1">{error.message}</p>}
                         </div>
@@ -100,7 +100,7 @@ const Login = () => {
                                     {...field}
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Enter your password"
-                                    className="mt-1 p-3 w-full rounded-lg bg-white/20 text-gray-900 placeholder-gray-800 focus:ring-2 focus:ring-gray-700 focus:outline-none"
+                                    className="mt-1 p-3 w-full rounded-lg bg-white/20 text-gray-900 placeholder-gray-800 focus:ring-2 focus:ring-gray-700 focus:outline-none border-black"
                                 />
                                 <button
                                     type="button"
@@ -134,7 +134,7 @@ const Login = () => {
 
                 {/* Additional Links - Repositioned */}
                 <div className="flex justify-between items-center text-sm text-gray-900 mb-10">
-                    <a href="#" className="text-[#787878] font-semibold hover:no-underline">Create an account</a>
+                    <a href="/auth/signup" className="text-[#787878] font-semibold hover:no-underline">Create an account</a>
                     <a href="#" className="text-[#787878] font-semibold hover:no-underline">Forgot your password?</a>
                 </div>
                 

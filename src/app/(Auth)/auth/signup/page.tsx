@@ -1,0 +1,201 @@
+"use client";
+
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import Image from "next/image";
+import { Eye, EyeOff } from "lucide-react";
+import loginBg from "@/assets/loginform/login_bg.jpeg";
+import miracleLogo from "@/assets/loginform/Miracle_logo.png";
+
+const SignUp = () => {
+    const { control, handleSubmit } = useForm();
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const toggleConfirmPasswordVisibility = () => {
+        setShowConfirmPassword(!showConfirmPassword);
+    };
+
+    return (
+        <div 
+            className="h-screen w-full flex justify-center items-center"
+            style={{
+                backgroundImage: `url(${loginBg.src})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat"
+            }}
+        >
+            <form
+                className="bg-white/5 backdrop-blur-xl p-12 rounded-2xl shadow-2xl w-full max-w-2xl space-y-6 border border-white/10"
+            >
+                {/* Header with Logo */}
+                <div className="flex justify-between items-center mb-2">
+                    <div>
+                        <h2 className="text-3xl font-semibold text-gray-900 whitespace-nowrap">Create Account</h2>
+                    </div>
+                    <Image 
+                        src={miracleLogo} 
+                        alt="Miracle Logo" 
+                        height={45} 
+                        className="opacity-90 hover:opacity-100 transition-opacity"
+                    />
+                </div>
+
+                {/* First Name and Last Name - Side by Side */}
+                <div className="flex space-x-4">
+                    {/* First Name Input */}
+                    <Controller
+                        name="firstName"
+                        control={control}
+                        rules={{ required: "First name is required" }}
+                        defaultValue=""
+                        render={({ field, fieldState: { error } }) => (
+                            <div className="flex-1">
+                                <label className="block text-sm font-medium text-gray-900">First Name</label>
+                                <Input
+                                    {...field}
+                                    placeholder="First Name"
+                                    className="mt-1 p-3 w-full rounded-lg bg-transparent text-gray-900 placeholder-gray-800 focus:ring-2 focus:ring-gray-700 focus:outline-none border-black"
+                                />
+                                {error && <p className="text-red-400 text-sm mt-1">{error.message}</p>}
+                            </div>
+                        )}
+                    />
+
+                    {/* Last Name Input */}
+                    <Controller
+                        name="lastName"
+                        control={control}
+                        rules={{ required: "Last name is required" }}
+                        defaultValue=""
+                        render={({ field, fieldState: { error } }) => (
+                            <div className="flex-1">
+                                <label className="block text-sm font-medium text-gray-900">Last Name</label>
+                                <Input
+                                    {...field}
+                                    placeholder="Last Name"
+                                    className="mt-1 p-3 w-full rounded-lg bg-transparent text-gray-900 placeholder-gray-800 focus:ring-2 focus:ring-gray-700 focus:outline-none border-black"
+                                />
+                                {error && <p className="text-red-400 text-sm mt-1">{error.message}</p>}
+                            </div>
+                        )}
+                    />
+                </div>
+
+                {/* Email Input */}
+                <Controller
+                    name="email"
+                    control={control}
+                    rules={{ required: "Email is required" }}
+                    defaultValue=""
+                    render={({ field, fieldState: { error } }) => (
+                        <div>
+                            <label className="block text-sm font-medium text-gray-900">Email</label>
+                            <Input
+                                {...field}
+                                type="email"
+                                placeholder="Enter your email"
+                                className="mt-1 p-3 w-full rounded-lg bg-transparent text-gray-900 placeholder-gray-800 focus:ring-2 focus:ring-gray-700 focus:outline-none border-black"
+                            />
+                            {error && <p className="text-red-400 text-sm mt-1">{error.message}</p>}
+                        </div>
+                    )}
+                />
+
+                {/* Password Input with Show/Hide Toggle */}
+                <Controller
+                    name="password"
+                    control={control}
+                    rules={{ required: "Password is required" }}
+                    defaultValue=""
+                    render={({ field, fieldState: { error } }) => (
+                        <div>
+                            <label className="block text-sm font-medium text-gray-900">Password</label>
+                            <div className="relative">
+                                <Input
+                                    {...field}
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter your password"
+                                    className="mt-1 p-3 w-full rounded-lg bg-transparent text-gray-900 placeholder-gray-800 focus:ring-2 focus:ring-gray-700 focus:outline-none border-black"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={togglePasswordVisibility}
+                                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 flex items-center px-2"
+                                >
+                                    {showPassword ? (
+                                        <EyeOff size={18} strokeWidth={1.5} className="text-gray-700" />
+                                    ) : (
+                                        <Eye size={18} strokeWidth={1.5} className="text-gray-700" />
+                                    )}
+                                    <span className="ml-1 text-sm text-gray-700">
+                                        {showPassword ? "Hide" : "Show"}
+                                    </span>
+                                </button>
+                            </div>
+                            {error && <p className="text-red-400 text-sm mt-1">{error.message}</p>}
+                        </div>
+                    )}
+                />
+
+                {/* Confirm Password Input with Show/Hide Toggle */}
+                <Controller
+                    name="confirmPassword"
+                    control={control}
+                    rules={{ required: "Please confirm your password" }}
+                    defaultValue=""
+                    render={({ field, fieldState: { error } }) => (
+                        <div>
+                            <label className="block text-sm font-medium text-gray-900">Confirm Password</label>
+                            <div className="relative">
+                                <Input
+                                    {...field}
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    placeholder="Confirm your password"
+                                    className="mt-1 p-3 w-full rounded-lg bg-transparent text-gray-900 placeholder-gray-800 focus:ring-2 focus:ring-gray-700 focus:outline-none border-black"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={toggleConfirmPasswordVisibility}
+                                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 flex items-center px-2"
+                                >
+                                    {showConfirmPassword ? (
+                                        <EyeOff size={18} strokeWidth={1.5} className="text-gray-700" />
+                                    ) : (
+                                        <Eye size={18} strokeWidth={1.5} className="text-gray-700" />
+                                    )}
+                                    <span className="ml-1 text-sm text-gray-700">
+                                        {showConfirmPassword ? "Hide" : "Show"}
+                                    </span>
+                                </button>
+                            </div>
+                            {error && <p className="text-red-400 text-sm mt-1">{error.message}</p>}
+                        </div>
+                    )}
+                />
+
+                {/* Submit Button */}
+                <button
+                    type="button"
+                    className="w-full p-4 rounded-lg text-white font-semibold transition-all duration-300 bg-[#835ADCCC] hover:bg-[#6E47C0CC]"
+                >
+                    Sign Up
+                </button>
+
+                {/* Login Link */}
+                <div className="text-center text-sm text-gray-900">
+                    <span></span>
+                    <a href="/auth/login" className="text-[#787878] font-semibold hover:no-underline">Already have an account? </a>
+                </div>
+            </form>
+        </div>
+    );
+};
+
+export default SignUp;
