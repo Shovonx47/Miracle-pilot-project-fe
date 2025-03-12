@@ -33,7 +33,7 @@ const Login = () => {
                 dispatch(setUser({ token: response.data }));
                 toast.success(response.message);
                 router.push("/");
-                // reset()
+                reset()
             } else if (response.success === false && response.errorSources) {
                 const errorMessage = response.errorSources.map((err: any) => err.message).join(", ");
                 toast.error(errorMessage);
@@ -91,7 +91,7 @@ const Login = () => {
                     name="password"
                     control={control}
                     rules={{ required: "Password is required" }}
-                    defaultValue="123456789"
+                    defaultValue="S-250001"
                     render={({ field, fieldState: { error } }) => (
                         <div>
                             <label className="block text-sm font-medium text-gray-900">Password</label>

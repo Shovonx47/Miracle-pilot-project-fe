@@ -13,6 +13,10 @@ import uploadFile from "@/Helper/uploadFile";
 import { useCreateStudentMutation, useGetSingleStudentQuery, useUpdateStudentMutation } from "@/redux/api/Student/studentApi";
 import { toast } from "sonner";
 import LoadingSpinner from "@/components/Loader";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { verifyToken } from "@/utils/verifyToken";
+import { TUser } from "@/redux/features/Auth/authSlice";
 
 
 
@@ -28,11 +32,22 @@ const formSections = [
 ];
 
 const UpdateStudentForm = () => {
-    const id = "67a340bdaa72d2787d7478ee"
+    const id = "67cb18df53cc89c6e95d7307"
+
+
+    const userToken = useSelector((state: RootState) => state?.auth?.token);
+    
+        // Get user role if token exists
+        let email = "";
+        if (userToken) {
+            const userId = (verifyToken(userToken) as TUser);
+            email = userId?.email ?? ""; // Fallback to empty string if no id found
+        }
+
 
     const { control, handleSubmit, setValue, watch, trigger } = useForm({});
 
-    const { data: singleStudent, isLoading, refetch } = useGetSingleStudentQuery(id)
+    const { data: singleStudent, isLoading, refetch } = useGetSingleStudentQuery(email)
 
     const [updateStudent, { isLoading: updateLoading }] = useUpdateStudentMutation()
 
