@@ -44,12 +44,30 @@ export const navigationData = {
           { title: "All Staffs", url: "/staff/all-staff", permission: "view" },
         ],
       },
-      // {
-      //   title: "Human Resource",
-      //   url: "#",
-      //   icon: Users,
-      //   items: [{ title: "HR Dashboard", url: "/human-resource/hr-dashboard", permission: "view" }],
-      // },
+      {
+        title: "Accounts",
+        url: "#",
+        icon: Users,
+        items: [
+          { 
+            title: "Income and Expenses", 
+            url: "/accounts/income-and-expense", 
+            permission: "view" 
+          }
+        ],
+      },
+      {
+        title: "Human Resource",
+        url: "#",
+        icon: Users,
+        items: [
+          { 
+            title: "HR Dashboard", 
+            url: "/human-resource/hr-dashboard", 
+            permission: "view" 
+          }
+        ],
+      },
       {
         title: "Accountant",
         url: "#",
