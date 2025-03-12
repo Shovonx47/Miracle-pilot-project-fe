@@ -18,8 +18,9 @@ export const navigationData = {
           { title: "Add student", url: "/student/add-student", permission: "add" },
           { title: "Update student", url: "/student/edit-student", permission: "edit" },
           { title: "All Students", url: "/student/all-students", permission: "view" },
-          { title: "Student Details", url: "/student/student-details", permission: "view" },
+          { title: "Student Details", url: "/student/student-details", permission: "view" },  
           // { title: "Student Dashboard", url: "/student/student-dashboard", permission: "view" },
+          { title: "Attendance", url: "/student/attendance", permission: "view" },
         ],
       },
       {
@@ -53,8 +54,14 @@ export const navigationData = {
             title: "Income and Expenses", 
             url: "/accounts/income-and-expense", 
             permission: "view" 
+          },
+          { 
+            title: "Add Categories", 
+            url: "/accounts/add-categories", 
+            permission: "add" 
           }
         ],
+        
       },
       {
         title: "Human Resource",
