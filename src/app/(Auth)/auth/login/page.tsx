@@ -12,6 +12,7 @@ import miracleLogo from "@/assets/loginform/Miracle_logo.png";
 import Image from "next/image";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 
 const Login = () => {
     const { control, handleSubmit, reset } = useForm();
@@ -134,8 +135,8 @@ const Login = () => {
 
                 {/* Additional Links - Repositioned */}
                 <div className="flex justify-between items-center text-sm text-gray-900 mb-10">
-                    <a href="/auth/signup" className="text-[#787878] font-semibold hover:no-underline">Create an account</a>
-                    <a href="#" className="text-[#787878] font-semibold hover:no-underline">Forgot your password?</a>
+                    <Link href="/auth/signup" className="text-[#787878] font-semibold hover:no-underline">Create an account</Link>
+                    <Link href="/auth/forgot-password" className="text-[#787878] font-semibold hover:no-underline">Forgot your password?</Link>
                 </div>
                 
                 {/* Miracle Logo at the bottom of the login box */}

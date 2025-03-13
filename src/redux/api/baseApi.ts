@@ -11,15 +11,14 @@ import { setUser } from "../features/Auth/authSlice";
 import { handleLogout } from "@/utils/logoutFunc";
 
 // Define a service using a base URL and expected endpoints
-
 const baseQuery = fetchBaseQuery({
   baseUrl: `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1`,
-  credentials: 'include',
+  credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
 
     if (token) {
-      headers.set('authorization', `${token}`);
+      headers.set("authorization", `${token}`);
     }
     // Remove these CORS headers - they should be set by the server
     // headers.set('Access-Control-Allow-Credentials', 'true');
@@ -38,11 +37,13 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 
   if (result?.error?.status === 401) {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1/refresh-token`, {
-        method: 'POST',
-        credentials: 'include',
-        // Remove CORS headers from client side
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1/refresh-token`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
 
       const data = await res.json();
 
@@ -65,7 +66,6 @@ const baseQueryWithRefreshToken: BaseQueryFn<
   return result;
 };
 
-
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithRefreshToken,
@@ -77,7 +77,7 @@ export const baseApi = createApi({
     "class_routine",
     "exam_schedule",
     "off_day",
-    "salary"
+    "salary",
   ],
   endpoints: () => ({}),
 });
