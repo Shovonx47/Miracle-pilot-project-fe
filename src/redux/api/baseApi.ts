@@ -21,6 +21,9 @@ const baseQuery = fetchBaseQuery({
     if (token) {
       headers.set('authorization', `${token}`);
     }
+    // Remove these CORS headers - they should be set by the server
+    // headers.set('Access-Control-Allow-Credentials', 'true');
+    // headers.set('Access-Control-Allow-Origin', process.env.NEXT_PUBLIC_BASE_API_URL || '');
 
     return headers;
   },
@@ -31,34 +34,31 @@ const baseQueryWithRefreshToken: BaseQueryFn<
   BaseQueryApi,
   DefinitionType
 > = async (args, api, extraOptions): Promise<any> => {
-  const isSessionExpired = true;
-
   let result = await baseQuery(args, api, extraOptions);
 
-
   if (result?.error?.status === 401) {
-    //* Send Refresh
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1/refresh-token`, {
+        method: 'POST',
+        credentials: 'include',
+        // Remove CORS headers from client side
+      });
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1/refresh-token`, {
-      method: 'POST',
-      credentials: 'include',
-    });
+      const data = await res.json();
 
-    const data = await res.json();
-
-    if (data?.data?.token) {
-      // const user = (api.getState() as RootState).auth.user;
-
-      api.dispatch(
-        setUser({
-          // user,
-          token: data.data.token,
-        })
-      );
-
-      result = await baseQuery(args, api, extraOptions);
-    } else {
-      await handleLogout(api.dispatch, isSessionExpired);
+      if (data?.data?.token) {
+        api.dispatch(
+          setUser({
+            token: data.data.token,
+          })
+        );
+        // Retry the original request
+        result = await baseQuery(args, api, extraOptions);
+      } else {
+        await handleLogout(api.dispatch, true);
+      }
+    } catch (error) {
+      await handleLogout(api.dispatch, true);
     }
   }
 

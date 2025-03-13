@@ -20,68 +20,46 @@ type Role = keyof typeof roleBasedPrivateRoutes;
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // Allow public routes without authentication
     if (AuthRoutes.includes(pathname)) {
-        console.log("Public route, allowing access.");
         return NextResponse.next();
     }
 
-    // Get the token from cookies
-    const accessToken = request.cookies.get("refreshToken")?.value ?? null;
-
-    // console.log(accessToken);
-
-    // const cookieHeader = request.headers.get("cookie") || "";
-
-    // console.log("Cookies in Middleware:", request.cookies.getAll());
-
-    // console.log("Raw Cookie Header:", cookieHeader);
-
-    // const cookies = new Map(
-    //     cookieHeader.split("; ").map((c) => c.split("=") as [string, string])
-    // );
-    // const accessToken = cookies.get("refreshToken");
-
-    // console.log("Extracted Token:", accessToken);
-
-
+    const accessToken = request.cookies.get("refreshToken")?.value;
+    
     if (!accessToken) {
-
         return NextResponse.redirect(new URL("/auth/login", request.url));
     }
 
-    let decodedData = null;
     try {
-        decodedData = jwtDecode(accessToken) as any;
+        const decodedData = jwtDecode(accessToken) as any;
+        
+        if (!decodedData || Date.now() >= decodedData.exp * 1000) {
+            return NextResponse.redirect(new URL("/auth/login", request.url));
+        }
 
+        const role = decodedData?.role as Role;
+
+        if (role === "super_admin") {
+            return NextResponse.next();
+        }
+
+        if (!role || !roleBasedPrivateRoutes[role]) {
+            return NextResponse.redirect(new URL("/forbiddenPage", request.url));
+        }
+
+        const allowedRoutes = roleBasedPrivateRoutes[role];
+        const isAllowed = allowedRoutes.some((route) => 
+            pathname === route || pathname.startsWith(`${route}/`)
+        );
+
+        if (isAllowed) {
+            return NextResponse.next();
+        }
+        return NextResponse.redirect(new URL("/forbiddenPage", request.url));
     } catch (error) {
-
         return NextResponse.redirect(new URL("/auth/login", request.url));
     }
-
-    const role = decodedData?.role as Role;
-
-
-    // If the user is super_admin, allow access to all routes
-    if (role === "super_admin") {
-        console.log("Super admin, allowing access to all routes.");
-        return NextResponse.next();
-    }
-
-    if (!role || !roleBasedPrivateRoutes[role]) {
-        console.log("Role is not valid, redirecting.");
-        return NextResponse.redirect(new URL("/forbiddenPage", request.url));
-    }
-
-    const allowedRoutes = roleBasedPrivateRoutes[role];
-    const isAllowed = allowedRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
-
-    if (isAllowed) {
-        return NextResponse.next();
-    }
-    return NextResponse.redirect(new URL("/forbiddenPage", request.url));
 }
-
 
 export const config = {
     matcher: [

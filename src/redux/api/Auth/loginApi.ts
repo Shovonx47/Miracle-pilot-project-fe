@@ -1,7 +1,5 @@
 import { baseApi } from "../baseApi";
 
-
-
 const loginApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         login: builder.mutation({
@@ -9,14 +7,13 @@ const loginApi = baseApi.injectEndpoints({
                 url: "/login",
                 method: "POST",
                 body: info,
+                credentials: 'include',
             }),
             invalidatesTags: ["class_routine"],
         }),
-          
     }),
 });
 
 export const {
     useLoginMutation
-
 } = loginApi;
