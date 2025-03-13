@@ -2,21 +2,21 @@ import { baseApi } from "../baseApi";
 
 
 
-const loginApi = baseApi.injectEndpoints({
+const signUpApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        login: builder.mutation({
+        signup: builder.mutation({
             query: (info) => ({
-                url: "/login",
+                url: "/register-user",
                 method: "POST",
                 body: info,
             }),
-            // invalidatesTags: ["class_routine"],
+             
         }),
           
     }),
 });
 
 export const {
-    useLoginMutation
+    useSignupMutation
 
-} = loginApi;
+} = signUpApi;
