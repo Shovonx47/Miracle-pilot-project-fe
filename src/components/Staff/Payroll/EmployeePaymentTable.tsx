@@ -2,6 +2,18 @@
 import React, { useState } from 'react';
 import { ChevronDown, Filter } from 'lucide-react';
 import { PaginationPage } from '@/components/Reusable/Pagination';
+import { useGetAllSalariesQuery } from '@/redux/api/Salary/salaryApi';
+import LoadingSpinner from '@/components/Loader';
+
+interface Payment {
+  id: string;
+  name: string;
+  department: string;
+  designation: string;
+  phone: string;
+  amount: string;
+  status: string;
+}
 
 const EmployeePaymentTable = () => {
   const [filterBy, setFilterBy] = useState('Paid');
@@ -10,93 +22,25 @@ const EmployeePaymentTable = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
 
-  // Dummy data for employee payments
-  const dummyPayments = [
-    {
-      id: "EMP001",
-      name: "John Smith",
-      department: "Engineering",
-      designation: "Senior Developer",
-      phone: "+1-555-123-4567",
-      amount: "$4,500",
-      status: "Paid"
-    },
-    {
-      id: "EMP002",
-      name: "Sarah Johnson",
-      department: "Marketing",
-      designation: "Marketing Manager",
-      phone: "+1-555-234-5678",
-      amount: "$3,800",
-      status: "Paid"
-    },
-    {
-      id: "EMP003",
-      name: "Michael Brown",
-      department: "Finance",
-      designation: "Financial Analyst",
-      phone: "+1-555-345-6789",
-      amount: "$3,200",
-      status: "Pending"
-    },
-    {
-      id: "EMP004",
-      name: "Emily Davis",
-      department: "Human Resources",
-      designation: "HR Specialist",
-      phone: "+1-555-456-7890",
-      amount: "$3,500",
-      status: "Paid"
-    },
-    {
-      id: "EMP005",
-      name: "Robert Wilson",
-      department: "Operations",
-      designation: "Operations Manager",
-      phone: "+1-555-567-8901",
-      amount: "$4,200",
-      status: "Pending"
-    }
-  ];
+  const { data: salaryData, isLoading } = useGetAllSalariesQuery({
+    page,
+    limit,
+    sort: sortBy,
+    searchTerm: searchData,
+    status: filterBy === 'all' ? undefined : filterBy
+  });
 
-  // Filter dummy data based on search term and status
-  const filteredPayments = dummyPayments
-    .filter(payment => 
-      (filterBy === 'all' || payment.status === filterBy) &&
-      (searchData === '' || 
-        payment.id.toLowerCase().includes(searchData.toLowerCase()) ||
-        payment.name.toLowerCase().includes(searchData.toLowerCase()) ||
-        payment.department.toLowerCase().includes(searchData.toLowerCase()) ||
-        payment.designation.toLowerCase().includes(searchData.toLowerCase()))
-    )
-    .sort((a, b) => {
-      if (sortBy === 'name') {
-        return a.name.localeCompare(b.name);
-      } else if (sortBy === '-name') {
-        return b.name.localeCompare(a.name);
-      }
-      return 0;
-    });
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
-  // Paginate data
-  const paginatedPayments = filteredPayments.slice((page - 1) * limit, page * limit);
-  const totalPages = Math.ceil(filteredPayments.length / limit);
+  const payments: Payment[] = salaryData?.data || [];
+  const totalPages = Math.ceil((salaryData?.meta?.total || 0) / limit);
 
-  // Function to handle view pay slip
-interface Payment {
-    id: string;
-    name: string;
-    department: string;
-    designation: string;
-    phone: string;
-    amount: string;
-    status: string;
-}
-
-const handleViewPaySlip = (id: string): void => {
+  const handleViewPaySlip = (id: string): void => {
     console.log(`Viewing pay slip for employee ${id}`);
     // This would typically open a modal or navigate to a pay slip page
-};
+  };
 
   return (
     <div className="bg-white shadow-lg">
@@ -178,9 +122,9 @@ const handleViewPaySlip = (id: string): void => {
               <th className="p-4 text-left text-sm font-semibold text-gray-600">Action</th>
             </tr>
           </thead>
-          {paginatedPayments.length > 0 && (
+          {payments.length > 0 && (
             <tbody className="text-sm font-medium text-[#515B73]">
-              {paginatedPayments.map((payment, index) => (
+              {payments.map((payment: Payment, index: number) => (
                 <tr key={index} className="border-b">
                   <td className="p-4">
                     <input type="checkbox" className="rounded" />
@@ -215,7 +159,7 @@ const handleViewPaySlip = (id: string): void => {
             </tbody>
           )}
         </table>
-        {paginatedPayments.length === 0 && (
+        {payments.length === 0 && (
           <div className='h-40 flex items-center justify-center w-full'>No data found.</div>
         )}
       </div>
