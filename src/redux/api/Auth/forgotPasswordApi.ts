@@ -6,7 +6,7 @@ const forgotPasswordApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         forgotPassword: builder.mutation({
             query: (info) => ({
-                url: "/send-verify-code",
+                url: "/auth/send-verify-code",
                 method: "PUT",
                 body: info,
             }),
@@ -14,7 +14,7 @@ const forgotPasswordApi = baseApi.injectEndpoints({
         }),
         verifyOtp: builder.mutation({
             query: (info) => ({
-                url: "/verify-otp",
+                url: "/auth/verify-otp",
                 method: "PUT",
                 body: info,
             }),
@@ -22,7 +22,7 @@ const forgotPasswordApi = baseApi.injectEndpoints({
         }),
         updatePassword: builder.mutation({
             query: (info) => ({
-                url: "/update-forgot-password",
+                url: "/auth/update-forgot-password",
                 method: "PUT",
                 body: info,
             }),

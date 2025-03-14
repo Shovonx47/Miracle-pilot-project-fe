@@ -1,8 +1,12 @@
+"use client"
 import { Input } from "@/components/ui/input";
 import { Control, Controller, FieldValues, UseFormSetValue, UseFormTrigger } from "react-hook-form";
 import { ImagePlus, InfoIcon } from "lucide-react";
 import DynamicSelect from "@/components/Reusable/DynamicSelect";
 import { DatePickerForm } from "@/components/Reusable/DatePickerForm";
+import { useGetSingleUserQuery } from "@/redux/api/Auth/getUserApi";
+import { useEffect } from "react";
+import LoadingSpinner from '@/components/Loader';
 
 
 
@@ -10,7 +14,29 @@ const statuses = ["Active", "Inactive"];
 
 const genders = ["Male", "Female", "Other"];
 
-const subject = ["A", "B", "C", "D", "E"];
+const subject = [
+    "Mathematics",
+    "English",
+    "Science",
+    "History",
+    "Geography",
+    "Physics",
+    "Chemistry",
+    "Biology",
+    "Computer Science",
+    "Economics",
+    "Business Studies",
+    "Accounting",
+    "Arts",
+    "Music",
+    "Physical Education",
+    "Bangla", // If applicable for Bangladesh
+    "Islamic Studies", // If applicable
+    "Civics",
+    "Environmental Science",
+    "Statistics",
+];
+
 
 const boards = ["Dhaka", "Rajshahi", "Comilla", "Chittagong", "Sylhet", "Barisal", "Khulna", "Rangpur", "Mymensingh"];
 
@@ -26,12 +52,33 @@ const motherTongues = ["English", "Spanish", "Bengali", "Hindi", "Arabic", "Chin
 
 interface PersonalInfoProps {
     control: Control<FieldValues>;  // Use react-hook-form's Control type
-
+    watch: (name: string) => any;
     setValue: UseFormSetValue<FieldValues>; // Type-safe function for setting form values
     trigger: UseFormTrigger<FieldValues>;// Add trigger for validation
 }
 
-const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
+const PersonalInfo = ({ control, setValue, trigger, watch }: PersonalInfoProps) => {
+
+    const userId = watch("userId");
+
+
+    const { data: singleTeacher, isLoading } = useGetSingleUserQuery(userId)
+
+
+    useEffect(() => {
+        if (singleTeacher?.data) {
+            Object.entries(singleTeacher.data).forEach(([key, value]) => {
+                if (value) setValue(key, value); // Only update non-empty values
+            });
+        }
+    }, [singleTeacher, setValue]);
+
+
+    if (isLoading) {
+        return <LoadingSpinner />
+    }
+
+
     return (
         <div className="p-6 bg-white">
             <h2 className="text-xl font-semibold text-gray-800">Add Teacher</h2>
@@ -121,6 +168,7 @@ const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
                         name="firstName"
                         control={control}
                         rules={{ required: "First Name is required" }}
+                        defaultValue={singleTeacher?.data?.firstName || ""}
                         render={({ field, fieldState: { error } }) => (
                             <div>
                                 <label className="text-sm text-gray-600">First name</label>
@@ -138,6 +186,7 @@ const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
                         name="lastName"
                         control={control}
                         rules={{ required: "Last Name is required" }}
+                        defaultValue={singleTeacher?.data?.lastName || ""}
                         render={({ field, fieldState: { error } }) => (
                             <div>
                                 <label className="text-sm text-gray-600">Last name</label>
@@ -358,12 +407,14 @@ const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
                         name="email"
                         control={control}
                         rules={{ required: "Email is required" }}
+                        defaultValue={singleTeacher?.data?.email || ""}
                         render={({ field, fieldState: { error } }) => (
                             <div>
                                 <label className="text-sm text-gray-600">Email address</label>
                                 <Input
                                     {...field}
                                     placeholder="Enter email address"
+                                    readOnly={singleTeacher?.data?.email ? true : false}
                                 />
                                 {error && <p className="text-red-500 text-sm">{error.message}</p>}
                             </div>

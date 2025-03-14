@@ -72,21 +72,6 @@ const AddStudentForm = () => {
 
 
     return (
-        // <form onSubmit={handleSubmit(onSubmit)}>
-        //     <PersonalInfo control={control} setValue={setValue} />
-        //     <ParentsAndGuardianInformation control={control} setValue={setValue} />
-        //     <Siblings control={control} setValue={setValue} trigger={trigger} />
-        //     <Address control={control} setValue={setValue} />
-        //     <TransportInformation control={control} setValue={setValue} watch={watch} trigger={trigger} />
-        //     <HostelInformation control={control} setValue={setValue} watch={watch} trigger={trigger} />
-        //     <PreviousSchoolDetails control={control} setValue={setValue} watch={watch} trigger={trigger} />
-        //     <Documents control={control} setValue={setValue} />
-
-
-        //     <div className="flex justify-end m-10">
-        //         <Button variant="default" type="submit">Submit</Button>
-        //     </div>
-        // </form>
 
         <form onSubmit={handleSubmit(onSubmit)}>
             {formSections.map((Component, index) => (

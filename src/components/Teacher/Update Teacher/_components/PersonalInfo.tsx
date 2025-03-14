@@ -10,7 +10,28 @@ const statuses = ["Active", "Inactive"];
 
 const genders = ["Male", "Female", "Other"];
 
-const subject = ["A", "B", "C", "D", "E"];
+const subject = [
+    "Mathematics",
+    "English",
+    "Science",
+    "History",
+    "Geography",
+    "Physics",
+    "Chemistry",
+    "Biology",
+    "Computer Science",
+    "Economics",
+    "Business Studies",
+    "Accounting",
+    "Arts",
+    "Music",
+    "Physical Education",
+    "Bangla", // If applicable for Bangladesh
+    "Islamic Studies", // If applicable
+    "Civics",
+    "Environmental Science",
+    "Statistics",
+  ];
 
 const boards = ["Dhaka", "Rajshahi", "Comilla", "Chittagong", "Sylhet", "Barisal", "Khulna", "Rangpur", "Mymensingh"];
 

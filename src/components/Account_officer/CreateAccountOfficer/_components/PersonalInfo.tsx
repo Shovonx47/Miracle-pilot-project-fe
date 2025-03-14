@@ -3,6 +3,9 @@ import { Controller } from "react-hook-form";
 import { ImagePlus, InfoIcon } from "lucide-react";
 import DynamicSelect from "@/components/Reusable/DynamicSelect";
 import { DatePickerForm } from "@/components/Reusable/DatePickerForm";
+import { useGetSingleUserQuery } from "@/redux/api/Auth/getUserApi";
+import { useEffect } from "react";
+import LoadingSpinner from '@/components/Loader';
 
 
 
@@ -25,11 +28,33 @@ const motherTongues = ["English", "Spanish", "Bengali", "Hindi", "Arabic", "Chin
 
 interface PersonalInfoProps {
     control: any; // control from useForm
+    watch: (name: string) => any;
     setValue: (name: string, value: any) => void;
     trigger: (name: string) => void; // Add trigger for validation
 }
 
-const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
+const PersonalInfo = ({ control, setValue, trigger, watch }: PersonalInfoProps) => {
+
+
+    const userId = watch("userId");
+
+
+    const { data: singleACcountant, isLoading } = useGetSingleUserQuery(userId)
+
+
+    useEffect(() => {
+        if (singleACcountant?.data) {
+            Object.entries(singleACcountant.data).forEach(([key, value]) => {
+                if (value) setValue(key, value); // Only update non-empty values
+            });
+        }
+    }, [singleACcountant, setValue]);
+
+
+    if (isLoading) {
+        return <LoadingSpinner />
+    }
+
     return (
         <div className="p-6 bg-white">
             <h2 className="text-xl font-semibold text-gray-800">Add Accountant</h2>
@@ -119,6 +144,7 @@ const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
                         name="firstName"
                         control={control}
                         rules={{ required: "First Name is required" }}
+                        defaultValue={singleACcountant?.data?.firstName || ""}
                         render={({ field, fieldState: { error } }) => (
                             <div>
                                 <label className="text-sm text-gray-600">First name</label>
@@ -136,6 +162,7 @@ const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
                         name="lastName"
                         control={control}
                         rules={{ required: "Last Name is required" }}
+                        defaultValue={singleACcountant?.data?.lastName || ""}
                         render={({ field, fieldState: { error } }) => (
                             <div>
                                 <label className="text-sm text-gray-600">Last name</label>
@@ -189,7 +216,7 @@ const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
                             </div>
                         )}
                     />
-                     
+
 
                     {/* Gender Select */}
                     <Controller
@@ -221,7 +248,7 @@ const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
                         render={({ field, fieldState: { error } }) => (
                             <div>
                                 <DatePickerForm
-                                    value={field.value }
+                                    value={field.value}
                                     onChange={(formattedDate) => {
                                         setValue("dateOfBirth", formattedDate);
                                         trigger("dateOfBirth");
@@ -292,7 +319,7 @@ const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
                                         setValue("religion", val);
                                         trigger("religion");
                                     }}
-                                     
+
                                 />
                                 {error && <p className="text-red-500 text-sm">{error.message}</p>}
                             </div>
@@ -319,8 +346,8 @@ const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
                     <Controller
                         name="alternativeContactNumber"
                         control={control}
-                         
-                        render={({ field  }) => (
+
+                        render={({ field }) => (
                             <div>
                                 <label className="text-sm text-gray-600">Alternative Contact Number</label>
                                 <Input
@@ -336,12 +363,14 @@ const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
                         name="email"
                         control={control}
                         rules={{ required: "Email is required" }}
+                        defaultValue={singleACcountant?.data?.email || ""}
                         render={({ field, fieldState: { error } }) => (
                             <div>
                                 <label className="text-sm text-gray-600">Email address</label>
                                 <Input
                                     {...field}
                                     placeholder="Enter email address"
+                                    readOnly={singleACcountant?.data?.email ? true : false}
                                 />
                                 {error && <p className="text-red-500 text-sm">{error.message}</p>}
                             </div>
