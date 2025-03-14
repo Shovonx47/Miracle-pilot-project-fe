@@ -1,12 +1,16 @@
+"use client"
 import { Input } from "@/components/ui/input";
 import { Controller } from "react-hook-form";
 import { ImagePlus, InfoIcon } from "lucide-react";
 import DynamicSelect from "@/components/Reusable/DynamicSelect";
 import { DatePickerForm } from "@/components/Reusable/DatePickerForm";
+import { useGetSingleUserQuery } from "@/redux/api/Auth/getUserApi";
+import { useEffect } from "react";
+import LoadingSpinner from '@/components/Loader';
 
 const academicYears = ["June 2024/25", "July 2025/26", "August 2026/27", "September 2027/28", "October 2028/29"];
 
-const statuses = ["Active", "Inactive" ];
+const statuses = ["Active", "Inactive"];
 
 const genders = ["Male", "Female", "Other"];
 
@@ -27,12 +31,34 @@ const motherTongues = ["English", "Spanish", "Bengali", "Hindi", "Arabic", "Chin
 
 
 interface PersonalInfoProps {
-    control: any; // control from useForm
+    control: any; 
+    watch: any;  
     setValue: (name: string, value: any) => void;
     trigger: (name: string) => void; // Add trigger for validation
 }
 
-const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
+const PersonalInfo = ({ control, setValue, trigger, watch }: PersonalInfoProps) => {
+
+    const userId = watch("userId");
+
+
+    const { data: singleStudent, isLoading } = useGetSingleUserQuery(userId)
+
+
+    useEffect(() => {
+        if (singleStudent?.data) {
+            Object.entries(singleStudent.data).forEach(([key, value]) => {
+                if (value) setValue(key, value); // Only update non-empty values
+            });
+        }
+    }, [singleStudent, setValue]);
+
+
+    if (isLoading) {
+        return <LoadingSpinner />
+    }
+
+
     return (
         <div className="p-6 bg-white">
             <h2 className="text-xl font-semibold text-gray-800">Add Student</h2>
@@ -209,6 +235,7 @@ const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
                         name="firstName"
                         control={control}
                         rules={{ required: "First Name is required" }}
+                        defaultValue={singleStudent?.data?.firstName || ""}
                         render={({ field, fieldState: { error } }) => (
                             <div>
                                 <label className="text-sm text-gray-600">First name</label>
@@ -226,6 +253,7 @@ const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
                         name="lastName"
                         control={control}
                         rules={{ required: "Last Name is required" }}
+                        defaultValue={singleStudent?.data?.lastName || ""}
                         render={({ field, fieldState: { error } }) => (
                             <div>
                                 <label className="text-sm text-gray-600">Last name</label>
@@ -312,7 +340,7 @@ const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
                         render={({ field, fieldState: { error } }) => (
                             <div>
                                 <DatePickerForm
-                                    value={field.value }
+                                    value={field.value}
                                     onChange={(formattedDate) => {
                                         setValue("dateOfBirth", formattedDate);
                                         trigger("dateOfBirth");
@@ -390,12 +418,14 @@ const PersonalInfo = ({ control, setValue, trigger }: PersonalInfoProps) => {
                         name="email"
                         control={control}
                         rules={{ required: "Email is required" }}
+                        defaultValue={singleStudent?.data?.email || ""}
                         render={({ field, fieldState: { error } }) => (
                             <div>
                                 <label className="text-sm text-gray-600">Email address</label>
                                 <Input
                                     {...field}
                                     placeholder="Enter email address"
+                                    readOnly={singleStudent?.data?.email ? true : false}
                                 />
                                 {error && <p className="text-red-500 text-sm">{error.message}</p>}
                             </div>

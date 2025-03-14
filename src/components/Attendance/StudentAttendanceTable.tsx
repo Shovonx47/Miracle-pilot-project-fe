@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { ChevronDown, Filter } from 'lucide-react';
 import { PaginationPage } from '@/components/Reusable/Pagination';
 import Image from 'next/image';
+import StudentDetails from '../student/StudentDetails';
 
 type StudentType = {
   admissionNo: string;
@@ -12,9 +13,15 @@ type StudentType = {
   section: string;
   attendance: string;
   notes: string;
+  
 };
 
-const StudentAttendanceTable = () => {
+
+type StudentDetailsProps = {
+  allStudents:any
+}
+
+const StudentAttendanceTable = ({allStudents}:StudentDetailsProps) => {
   const [filterBy, setFilterBy] = useState('all');
   const [sortBy, setSortBy] = useState('name');
   const [searchData, setSearchData] = useState('');
@@ -112,7 +119,7 @@ const StudentAttendanceTable = () => {
       notes: ""
     }
   ]);
-
+  
   // Function to update student attendance
   const updateAttendance = (index: number, newStatus: string) => {
     const updatedStudents = [...students];
@@ -258,29 +265,29 @@ const StudentAttendanceTable = () => {
               </th>
             </tr>
           </thead>
-          {paginatedStudents.length > 0 && (
+          {allStudents?.data?.data?.length > 0 && (
             <tbody className="text-sm font-medium text-gray-700">
-              {paginatedStudents.map((student, index) => (
+              {allStudents?.data?.data?.map((student:any, index:number) => (
                 <tr key={index} className="border-t hover:bg-gray-50">
                   <td className="p-4 text-center">
                     <input type="checkbox" className="rounded" />
                   </td>
                   <td className="p-4">
-                    <span className="text-blue-600">{student.admissionNo}</span>
+                    <span className="text-blue-600">{student.studentId}</span>
                   </td>
-                  <td className="p-4">{student.rollNo}</td>
+                  <td className="p-4">{student.roll}</td>
                   <td className="p-4">
                     <div className="flex items-center">
                       <div className="w-8 h-8 mr-3 rounded-full overflow-hidden">
                         <Image 
                           src={require("@/assets/avatars/le.jpeg")}
-                          alt={`${student.name}'s avatar`}
+                          alt={`${student.firstName} avatar`}
                           width={32}
                           height={32}
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      {student.name}
+                      {student.firstName}
                     </div>
                   </td>
                   <td className="p-4">{student.class}</td>
