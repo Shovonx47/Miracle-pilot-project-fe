@@ -1,9 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['localhost'],
-    unoptimized: true,
+    domains: ['i.ibb.co'],
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

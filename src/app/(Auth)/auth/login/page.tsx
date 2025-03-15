@@ -10,9 +10,10 @@ import { toast } from "sonner";
 import loginBg from "@/assets/loginform/login_bg.jpeg";
 import miracleLogo from "@/assets/loginform/Miracle_logo.png";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import Cookies from "js-cookie";
 
 const Login = () => {
     const { control, handleSubmit, reset } = useForm();
@@ -22,6 +23,22 @@ const Login = () => {
     const dispatch = useAppDispatch();
     const router = useRouter();
 
+    // Check authentication on mount - with client-side only code
+    useEffect(() => {
+        // Use a client-side only approach to avoid hydration errors
+        const checkAuth = () => {
+            const refreshToken = document.cookie.includes('refreshToken');
+            const authToken = Cookies.get('authToken');
+            
+            if (refreshToken && authToken) {
+                dispatch(setUser({ token: authToken }));
+                router.push('/');
+            }
+        };
+        
+        checkAuth();
+    }, [dispatch, router]);
+
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -29,12 +46,28 @@ const Login = () => {
     const onSubmit = async (data: any) => {
         try {
             const response = await login(data).unwrap();
-            // const user = verifyToken(response.data) as TUser;
+            
             if (response.success) {
+                // Update Redux state
                 dispatch(setUser({ token: response.data }));
+                
+                // Set auth token cookie
+                Cookies.set('authToken', response.data, { 
+                    expires: 7,
+                    path: '/',
+                    sameSite: 'lax'
+                });
+                
+                // Show success message
                 toast.success(response.message);
-                router.push("/");
-                reset()
+                
+                // Reset form
+                reset();
+
+                // Navigate to home page - use client-side navigation
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 100);
             } else if (response.success === false && response.errorSources) {
                 const errorMessage = response.errorSources.map((err: any) => err.message).join(", ");
                 toast.error(errorMessage);

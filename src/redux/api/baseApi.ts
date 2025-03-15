@@ -7,8 +7,8 @@ import {
   fetchBaseQuery
 } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
-import { setUser } from "../features/Auth/authSlice";
-import { handleLogout } from "@/utils/logoutFunc";
+import { setUser, logout } from "../features/Auth/authSlice";
+import Cookies from "js-cookie";
 
 // Define a service using a base URL and expected endpoints
 const baseQuery = fetchBaseQuery({
@@ -18,12 +18,10 @@ const baseQuery = fetchBaseQuery({
     const token = (getState() as RootState).auth.token;
 
     if (token) {
-      headers.set("authorization", `${token}`);
+      headers.set("authorization", `Bearer ${token}`);
     }
-    // Remove these CORS headers - they should be set by the server
-    // headers.set('Access-Control-Allow-Credentials', 'true');
-    // headers.set('Access-Control-Allow-Origin', process.env.NEXT_PUBLIC_BASE_API_URL || '');
 
+    headers.set("Content-Type", "application/json");
     return headers;
   },
 });
@@ -37,29 +35,60 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 
   if (result?.error?.status === 401) {
     try {
+      // Try to refresh the token
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1/refresh-token`,
+        `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1/auth/refresh-token`,
         {
           method: "POST",
           credentials: "include",
+          headers: {
+            "Content-Type": "application/json"
+          }
         }
       );
 
       const data = await res.json();
 
       if (data?.data?.token) {
+        // Update Redux state
         api.dispatch(
           setUser({
             token: data.data.token,
           })
         );
-        // Retry the original request
+        
+        // Update cookie
+        Cookies.set('authToken', data.data.token, { 
+          expires: 7,
+          path: '/',
+          sameSite: 'lax'
+        });
+        
+        // Retry the original request with new token
         result = await baseQuery(args, api, extraOptions);
       } else {
-        await handleLogout(api.dispatch, true);
+        // Handle token refresh failure - without using handleLogout
+        Cookies.remove('authToken', { path: '/' });
+        document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        
+        // Dispatch logout action directly
+        api.dispatch(logout());
+        localStorage.removeItem("persist:auth");
+        
+        // Redirect to login
+        window.location.href = '/auth/login';
       }
     } catch (error) {
-      await handleLogout(api.dispatch, true);
+      // Handle error - without using handleLogout
+      Cookies.remove('authToken', { path: '/' });
+      document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      
+      // Dispatch logout action directly
+      api.dispatch(logout());
+      localStorage.removeItem("persist:auth");
+      
+      // Redirect to login
+      window.location.href = '/auth/login';
     }
   }
 
