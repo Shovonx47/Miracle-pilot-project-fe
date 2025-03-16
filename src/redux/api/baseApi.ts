@@ -38,7 +38,7 @@ const baseQueryWithRefreshToken: BaseQueryFn<
   if (result?.error?.status === 401) {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1/refresh-token`,
+        `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1/auth/refresh-token`,
         {
           method: "POST",
           credentials: "include",
@@ -79,6 +79,7 @@ export const baseApi = createApi({
     "off_day",
     "salary",
     "attendance",
+    "forgot_password",
   ],
   endpoints: () => ({}),
 });
