@@ -33,7 +33,33 @@ const subject = [
     "Statistics",
   ];
 
-const boards = ["Dhaka", "Rajshahi", "Comilla", "Chittagong", "Sylhet", "Barisal", "Khulna", "Rangpur", "Mymensingh"];
+ 
+
+
+const educationalQualifications = [
+    "Primary Education",
+    "Secondary School Certificate (SSC)",
+    "Higher Secondary Certificate (HSC)",
+    "Diploma",
+    "Bachelor's Degree",
+    "Master's Degree",
+    "Doctorate (PhD)",
+    "Postdoctoral Research",
+    "Technical/Vocational Education",
+    "Professional Certifications",
+    "Others"
+  ];
+
+
+const maritalStatuses = [
+    "Married",
+    "Unmarried",
+    "Divorced",
+    "Widowed",
+    "Separated",
+    "Engaged"
+  ];
+  
 
 const bloodGroups = ["O +ve", "O -ve", "A +ve", "A -ve", "B +ve", "B -ve", "AB +ve", "AB -ve"];
 
@@ -369,7 +395,7 @@ const PersonalInfo = ({ control, setValue, trigger, singleTeacher }: PersonalInf
                                 <DynamicSelect
                                     label="Marital Status"
                                     placeholder="Select Marital Status"
-                                    options={bloodGroups}
+                                    options={maritalStatuses}
                                     value={field.value}
                                     onChange={(val) => {
                                         setValue("maritalStatus", val);
@@ -483,7 +509,7 @@ const PersonalInfo = ({ control, setValue, trigger, singleTeacher }: PersonalInf
                                 <DynamicSelect
                                     label="Educational Qualification"
                                     placeholder="Select Qualification"
-                                    options={boards}
+                                    options={educationalQualifications}
                                     value={field.value}
                                     onChange={(val) => {
                                         setValue("educationalQualification", val);

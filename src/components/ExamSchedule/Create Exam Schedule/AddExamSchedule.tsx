@@ -19,10 +19,6 @@ const AddExamSettingForm = () => {
     const [createExamSetting, { isLoading }] = useCreateExamSettingMutation()
 
     const onSubmit = async (data: any) => {
-
-        console.log(data)
-
-
         try {
             const response = await createExamSetting(data).unwrap();
             console.log(response)

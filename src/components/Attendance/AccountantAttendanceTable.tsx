@@ -11,16 +11,13 @@ import { toast } from 'sonner';
 
 
 
-type StudentType = {
+type AccountantType = {
   _id: string;
-  studentId: string;
-  roll: string;
+  accountantId: string;
   firstName: string;
   lastName: string;
-  class: string;
-  section: string;
+  category: string;
   profileImage: string;
-  notes: string;
 };
 
 
@@ -30,8 +27,8 @@ type PaginationDetails = {
   totalPage: number
 }
 
-type StudentDetailsProps = {
-  allStudents: { data?: { data?: StudentType[], meta?: PaginationDetails } };
+type AccountantDetailsProps = {
+  allAccountants: { data?: { data?: AccountantType[], meta?: PaginationDetails } };
   filterBy: string;  // Defined filter options
   setFilterBy: (value: string) => void;  // Set filter handler
   sortBy: string;  // Sorting options (alphabetical)
@@ -45,36 +42,36 @@ type StudentDetailsProps = {
 
 
 
-const StudentAttendanceTable = ({ allStudents, filterBy,
+const AccountantAttendanceTable = ({ allAccountants, filterBy,
   setFilterBy,
   sortBy,
   setSortBy,
   page,
   setPage,
   limit,
-  setLimit }: StudentDetailsProps) => {
+  setLimit }: AccountantDetailsProps) => {
 
   const [attendance, { isLoading }] = useAddAttendanceMutation()
 
   const { control } = useForm();
 
 
-  // Function to update student attendance
-  const students = allStudents?.data?.data || [];
+  // Function to update accountant attendance
+  const accountants = allAccountants?.data?.data || [];
 
   // Optimized State for Attendance Management
   const [attendanceData, setAttendanceData] = useState<any[]>([]);
 
   useEffect(() => {
     setAttendanceData(
-      students.map((student) => ({
+        accountants.map((accountant) => ({
         user: {
-          id: student._id,
-          providedId: student.studentId,
-          role: "student",
+          id: accountant._id,
+          providedId: accountant.accountantId,
+          role: "accountant",
         },
-        full_name: `${student.firstName} ${student.lastName || ''}`.trim(),
-        designation: `${student.class} Student`,
+        full_name: `${accountant.firstName} ${accountant.lastName || ''}`.trim(),
+        designation: `${accountant.category} accountant`,
         date: dayjs().format("DD-MM-YYYY"),
         present: false,
         absent: false,
@@ -82,13 +79,13 @@ const StudentAttendanceTable = ({ allStudents, filterBy,
         out_time: null,
       }))
     );
-  }, [students]);
+  }, [accountants]);
 
   // Handle Attendance Update
-  const updateAttendance = (studentId: string, field: string, value: boolean | string) => {
+  const updateAttendance = (accountantId: string, field: string, value: boolean | string) => {
     setAttendanceData((prevData) =>
       prevData.map((entry) =>
-        entry.user.providedId === studentId
+        entry.user.providedId === accountantId
           ? {
             ...entry,
             [field]: value,
@@ -130,7 +127,7 @@ const StudentAttendanceTable = ({ allStudents, filterBy,
   return (
     <div className="bg-white shadow-sm border rounded">
       <div className="flex justify-between items-center p-4 border-b">
-        <h1 className="text-xl font-semibold text-gray-800">Student Attendance List</h1>
+        <h1 className="text-xl font-semibold text-gray-800">Accountant Attendance List</h1>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <div className="border border-gray-200 py-1 px-3 rounded">
@@ -158,8 +155,8 @@ const StudentAttendanceTable = ({ allStudents, filterBy,
               onChange={(e) => setSortBy(e.target.value)}
               className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value="roll">Sort by A-Z</option>
-              <option value="-roll">Sort by Z-A</option>
+              <option value="accountantId">Sort by A-Z</option>
+              <option value="-accountantId">Sort by Z-A</option>
             </select>
             <ChevronDown className="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
           </div>
@@ -201,20 +198,16 @@ const StudentAttendanceTable = ({ allStudents, filterBy,
                   <input type="checkbox" className="rounded" />
                 </th>
                 <th className="p-4 text-left text-sm font-semibold text-gray-600">
-                  Admission No
+                 Id
                 </th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-600">
-                  Roll No
-                </th>
+                
                 <th className="p-4 text-left text-sm font-semibold text-gray-600">
                   Name
                 </th>
                 <th className="p-4 text-left text-sm font-semibold text-gray-600">
-                  Class
+                Category
                 </th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-600">
-                  Section
-                </th>
+                
                 <th className="p-4 text-left text-sm font-semibold text-gray-600">
                   Attendance
                 </th>
@@ -223,38 +216,38 @@ const StudentAttendanceTable = ({ allStudents, filterBy,
                 </th>
               </tr>
             </thead>
-            {students?.length > 0 && (
+            {accountants?.length > 0 && (
               <tbody className="text-sm font-medium text-gray-700">
-                {students.map((student) => {
+                {accountants.map((accountant) => {
                   const attendanceEntry = attendanceData.find(
-                    (entry) => entry.user.providedId === student.studentId
+                    (entry) => entry.user.providedId === accountant.accountantId
                   );
 
                   return (
-                    <tr key={student.studentId} className="border-t hover:bg-gray-50">
+                    <tr key={accountant.accountantId} className="border-t hover:bg-gray-50">
                       <td className="p-4 text-center">
                         <input type="checkbox" className="rounded" />
                       </td>
                       <td className="p-4">
-                        <span className="text-blue-600">{student.studentId}</span>
+                        <span className="text-blue-600">{accountant.accountantId}</span>
                       </td>
-                      <td className="p-4">{student.roll}</td>
+                      
                       <td className="p-4">
                         <div className="flex items-center">
                           <div className="w-8 h-8 mr-3 rounded-full overflow-hidden">
                             <Image
-                              src={student?.profileImage}
-                              alt={`${student.firstName} avatar`}
+                              src={accountant?.profileImage}
+                              alt={`${accountant.firstName} avatar`}
                               width={32}
                               height={32}
                               className="w-full h-full object-cover"
                             />
                           </div>
-                          {student.firstName}
+                          {accountant.firstName}
                         </div>
                       </td>
-                      <td className="p-4">{student.class}</td>
-                      <td className="p-4">{student.section}</td>
+                      <td className="p-4">{accountant.category}</td>
+                      
                       <td className="p-4">
                         <div className="flex flex-col space-y-2">
                           <div className="flex items-center space-x-4">
@@ -262,7 +255,7 @@ const StudentAttendanceTable = ({ allStudents, filterBy,
                             <div className="flex items-center space-x-1">
                               <button
                                 onClick={() =>
-                                  updateAttendance(student.studentId, "present", !attendanceEntry?.present)
+                                  updateAttendance(accountant.accountantId, "present", !attendanceEntry?.present)
                                 }
                                 className={`w-5 h-5 rounded-full flex items-center justify-center cursor-pointer ${attendanceEntry?.present
                                   ? "bg-blue-500 text-white"
@@ -279,7 +272,7 @@ const StudentAttendanceTable = ({ allStudents, filterBy,
                             <div className="flex items-center space-x-1">
                               <button
                                 onClick={() =>
-                                  updateAttendance(student.studentId, "absent", !attendanceEntry?.absent)
+                                  updateAttendance(accountant.accountantId, "absent", !attendanceEntry?.absent)
                                 }
                                 className={`w-5 h-5 rounded-full flex items-center justify-center cursor-pointer ${attendanceEntry?.absent
                                   ? "bg-blue-500 text-white"
@@ -299,7 +292,7 @@ const StudentAttendanceTable = ({ allStudents, filterBy,
                       <td className="p-2 flex space-x-2">
                         {/* In Time Input */}
                         <Controller
-                          name={`attendance.${student.studentId}.in_time`}
+                          name={`attendance.${accountant.accountantId}.in_time`}
                           control={control}
                           render={({ field }) => (
                             <div>
@@ -307,8 +300,8 @@ const StudentAttendanceTable = ({ allStudents, filterBy,
                               <Input
                                 type="time"
                                 {...field}
-                                value={attendanceData.find(entry => entry.user.providedId === student.studentId)?.in_time || ""}
-                                onChange={(e) => updateAttendance(student.studentId, "in_time", e.target.value)}
+                                value={attendanceData.find(entry => entry.user.providedId === accountant.accountantId)?.in_time || ""}
+                                onChange={(e) => updateAttendance(accountant.accountantId, "in_time", e.target.value)}
                               />
                             </div>
                           )}
@@ -316,7 +309,7 @@ const StudentAttendanceTable = ({ allStudents, filterBy,
 
                         {/* Out Time Input */}
                         <Controller
-                          name={`attendance.${student.studentId}.out_time`}
+                          name={`attendance.${accountant.accountantId}.out_time`}
                           control={control}
                           // rules={{ required: "Out Time is required" }}
                           render={({ field }) => (
@@ -325,8 +318,8 @@ const StudentAttendanceTable = ({ allStudents, filterBy,
                               <Input
                                 type="time"
                                 {...field}
-                                value={attendanceData.find(entry => entry.user.providedId === student.studentId)?.out_time || ""}
-                                onChange={(e) => updateAttendance(student.studentId, "out_time", e.target.value)}
+                                value={attendanceData.find(entry => entry.user.providedId === accountant.accountantId)?.out_time || ""}
+                                onChange={(e) => updateAttendance(accountant.accountantId, "out_time", e.target.value)}
                               />
                             </div>
                           )}
@@ -340,7 +333,7 @@ const StudentAttendanceTable = ({ allStudents, filterBy,
 
             )}
           </table>
-          {students.length === 0 && (
+          {accountants.length === 0 && (
             <div className='h-40 flex items-center justify-center w-full'>No data found.</div>
           )}
         </div>
@@ -348,7 +341,7 @@ const StudentAttendanceTable = ({ allStudents, filterBy,
 
       <div className="flex justify-end p-4 border-t">
         <div className='flex items-center'>
-          <PaginationPage totalPages={allStudents?.data?.meta?.totalPage as number} page={page} setPage={setPage} />
+          <PaginationPage totalPages={allAccountants?.data?.meta?.totalPage as number} page={page} setPage={setPage} />
         </div>
 
       </div>
@@ -356,4 +349,4 @@ const StudentAttendanceTable = ({ allStudents, filterBy,
   );
 };
 
-export default StudentAttendanceTable;
+export default AccountantAttendanceTable;

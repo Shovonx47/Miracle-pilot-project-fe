@@ -78,6 +78,7 @@ export const baseApi = createApi({
     "exam_schedule",
     "off_day",
     "salary",
+    "attendance",
   ],
   endpoints: () => ({}),
 });
