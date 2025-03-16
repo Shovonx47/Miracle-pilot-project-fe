@@ -13,10 +13,10 @@ const teacherApi = baseApi.injectEndpoints({
             invalidatesTags: ["teacher"],
         }),
         getAllTeachers: builder.query({
-            query: ({ page, limit, sort }) => ({
+            query: ({ page, limit, sort, searchTerm, status }) => ({
                 url: "/teachers",
                 method: "GET",
-                params: { page, limit, sort }
+                params: { page, limit, sort, searchTerm, status }
             }),
             providesTags: ["teacher"],
         }),

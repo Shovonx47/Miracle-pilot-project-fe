@@ -33,6 +33,7 @@ export const navigationData = {
           { title: "All Teachers", url: "/teacher/all-teacher", permission: "view" },
           { title: "Teacher Dashboard", url: "/teacher/teacher-dashboard", permission: "view" },
           { title: "Teacher Details", url: "/teacher/teacher-details", permission: "view" },
+          { title: "Attendance", url: "/teacher/attendance", permission: "view" },
         ],
       },
       {
@@ -43,6 +44,7 @@ export const navigationData = {
           { title: "Add Staff", url: "/staff/add-staff", permission: "add" },
           { title: "Edit Staff", url: "/staff/edit-staff", permission: "edit" },
           { title: "All Staffs", url: "/staff/all-staff", permission: "view" },
+          { title: "Attendance", url: "/staff/attendance", permission: "view" },
         ],
       },
       {
@@ -87,6 +89,7 @@ export const navigationData = {
         items: [
           { title: "Add Accountant", url: "/accountant/add-accountant", permission: "add" },
           { title: "Edit Accountant", url: "/accountant/edit-accountant", permission: "edit" },
+          { title: "Attendance", url: "/accountant/attendance", permission: "view" },
         ],
       },
       {

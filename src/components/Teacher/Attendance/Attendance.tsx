@@ -8,19 +8,19 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select";
-import StudentAttendanceTable from "@/components/Attendance/StudentAttendanceTable";
-import { useGetAllStudentsQuery } from '@/redux/api/Student/studentApi';
 import LoadingSpinner from '@/components/Loader';
+import { useGetAllTeachersQuery } from '@/redux/api/Teacher/teacherApi';
+import TeacherAttendanceTable from '@/components/Attendance/TeacherAttendanceTable';
 
-export default function AllStudentAttendance() {
+export default function AllTeacherAttendance() {
     const [filterBy, setFilterBy] = useState<string>('Active');
-    const [sortBy, setSortBy] = useState<string>('roll');
+    const [sortBy, setSortBy] = useState<string>('teacherId');
     const [searchData, setSearchData] = useState('');
 
     const [page, setPage] = useState(1)
     const [limit, setLimit] = useState(5)
 
-    const { data: allStudents, isLoading } = useGetAllStudentsQuery({ page, limit, sort: sortBy, searchTerm: searchData, status: filterBy })
+    const { data: allTeachers, isLoading } = useGetAllTeachersQuery({ page, limit, sort: sortBy, searchTerm: searchData, status: filterBy })
 
 
     if (isLoading) {
@@ -77,7 +77,7 @@ export default function AllStudentAttendance() {
                 </div>
             </div>
 
-            <StudentAttendanceTable allStudents={allStudents} filterBy={filterBy} setFilterBy={setFilterBy} sortBy={sortBy} setSortBy={setSortBy} page={page} setPage={setPage} limit={limit} setLimit={setLimit} />
+            <TeacherAttendanceTable allTeachers={allTeachers} filterBy={filterBy} setFilterBy={setFilterBy} sortBy={sortBy} setSortBy={setSortBy} page={page} setPage={setPage} limit={limit} setLimit={setLimit} />
         </div>
     );
 }

@@ -13,10 +13,10 @@ const accountOfficerApi = baseApi.injectEndpoints({
             invalidatesTags: ["account_officer"],
         }),
         getAllAccountOfficers: builder.query({
-            query: ({ page, limit, sort }) => ({
+            query: ({ page, limit, sort, searchTerm, status }) => ({
                 url: "/account-officer",
                 method: "GET",
-                params: { page, limit, sort }
+                params: { page, limit, sort, searchTerm, status }
             }),
             providesTags: ["account_officer"],
         }),
