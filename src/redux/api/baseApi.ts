@@ -8,7 +8,6 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 import { setUser, logout } from "../features/Auth/authSlice";
-import Cookies from "js-cookie";
 
 // Define a service using a base URL and expected endpoints
 const baseQuery = fetchBaseQuery({
@@ -25,6 +24,19 @@ const baseQuery = fetchBaseQuery({
     return headers;
   },
 });
+
+// Helper function to set a cookie
+const setCookie = (name: string, value: string, days: number) => {
+  const date = new Date();
+  date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+  const expires = `expires=${date.toUTCString()}`;
+  document.cookie = `${name}=${value}; ${expires}; path=/; SameSite=Lax`;
+};
+
+// Helper function to delete a cookie
+const deleteCookie = (name: string) => {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+};
 
 const baseQueryWithRefreshToken: BaseQueryFn<
   FetchArgs,
@@ -58,18 +70,14 @@ const baseQueryWithRefreshToken: BaseQueryFn<
         );
         
         // Update cookie
-        Cookies.set('authToken', data.data.token, { 
-          expires: 7,
-          path: '/',
-          sameSite: 'lax'
-        });
+        setCookie('authToken', data.data.token, 7);
         
         // Retry the original request with new token
         result = await baseQuery(args, api, extraOptions);
       } else {
         // Handle token refresh failure - without using handleLogout
-        Cookies.remove('authToken', { path: '/' });
-        document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        deleteCookie('authToken');
+        deleteCookie('refreshToken');
         
         // Dispatch logout action directly
         api.dispatch(logout());
@@ -80,8 +88,8 @@ const baseQueryWithRefreshToken: BaseQueryFn<
       }
     } catch (error) {
       // Handle error - without using handleLogout
-      Cookies.remove('authToken', { path: '/' });
-      document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      deleteCookie('authToken');
+      deleteCookie('refreshToken');
       
       // Dispatch logout action directly
       api.dispatch(logout());

@@ -13,7 +13,6 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import Cookies from "js-cookie";
 
 const Login = () => {
     const { control, handleSubmit, reset } = useForm();
@@ -23,12 +22,28 @@ const Login = () => {
     const dispatch = useAppDispatch();
     const router = useRouter();
 
+    // Helper function to get a cookie value by name
+    const getCookie = (name: string) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop()?.split(';').shift();
+        return undefined;
+    };
+
+    // Helper function to set a cookie
+    const setCookie = (name: string, value: string, days: number) => {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        const expires = `expires=${date.toUTCString()}`;
+        document.cookie = `${name}=${value}; ${expires}; path=/; SameSite=Lax`;
+    };
+
     // Check authentication on mount - with client-side only code
     useEffect(() => {
         // Use a client-side only approach to avoid hydration errors
         const checkAuth = () => {
             const refreshToken = document.cookie.includes('refreshToken');
-            const authToken = Cookies.get('authToken');
+            const authToken = getCookie('authToken');
             
             if (refreshToken && authToken) {
                 dispatch(setUser({ token: authToken }));
@@ -52,11 +67,7 @@ const Login = () => {
                 dispatch(setUser({ token: response.data }));
                 
                 // Set auth token cookie
-                Cookies.set('authToken', response.data, { 
-                    expires: 7,
-                    path: '/',
-                    sameSite: 'lax'
-                });
+                setCookie('authToken', response.data, 7);
                 
                 // Show success message
                 toast.success(response.message);
