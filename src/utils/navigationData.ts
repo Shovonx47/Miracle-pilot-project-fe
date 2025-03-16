@@ -59,6 +59,11 @@ export const navigationData = {
             title: "Add Categories", 
             url: "/accounts/add-categories", 
             permission: "add" 
+          },
+          { 
+            title: "Report", 
+            url: "/accounts/accounts-report", 
+            permission: "view" 
           }
         ],
         
