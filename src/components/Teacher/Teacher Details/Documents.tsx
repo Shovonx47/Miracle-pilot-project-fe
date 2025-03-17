@@ -5,6 +5,12 @@ interface DocumentsProps {
   }
   
   export default function Documents({ documents }: DocumentsProps) {
+
+    const extractFileName = (url: string) => {
+      return url.split('/').pop() || ''; // Extracts the last part of the URL (the file name)
+    };
+  
+
     return (
       <div className="p-4 border rounded-lg bg-white">
         <h3 className="text-lg mb-3">Documents</h3>
@@ -13,7 +19,7 @@ interface DocumentsProps {
           {documents.map((doc) => (
             <div key={doc.name} className="flex items-center gap-2 p-4 bg-gray-50 rounded border">
               <div className="w-5 h-5 bg-[#FFFFFF] rounded-sm flex-shrink-0" />
-              <span className="text-sm">{doc.name}</span>
+              <span className="text-sm">{doc.name && extractFileName(doc.name)}</span>
             </div>
           ))}
         </div>

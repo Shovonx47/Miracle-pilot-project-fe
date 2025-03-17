@@ -4,29 +4,22 @@ import Avatar from '@/assets/avatars/pe.png';
 interface ProfileInfo {
   id: string;
   name: string;
+
+  profileImage:string
   joinDate: string;
-  class: string;
   subject: string;
   gender: string;
   bloodGroup: string;
-  house: string;
   languageKnown: string;
   languages: string[];
 }
 
-const ProfileCard = () => {
-  const profileData: ProfileInfo = {
-    id: 'SA09781',
-    name: 'Syed Abul Kashem',
-    joinDate: '25 June 2024',
-    class: 'I - A, V-B',
-    subject: 'Bangla',
-    gender: 'Male',
-    bloodGroup: 'AB +ve',
-    house: 'Shekhhati, Jashore',
-    languageKnown: 'Bangla',
-    languages: ['Bangla', 'English']
-  };
+interface ProfileDataProps {
+  profileData: ProfileInfo;
+}
+
+const ProfileCard = ({ profileData }: ProfileDataProps) => {
+   
 
   return (
     <div className="w-[318px] rounded-lg bg-white shadow-sm">
@@ -34,8 +27,8 @@ const ProfileCard = () => {
       <div className="flex items-center gap-4 p-4 pb-6">
         <div className="h-12 w-12 overflow-hidden rounded-lg">
           <img
-            src={Avatar.src}
-            alt="Profile"
+            src={profileData?.profileImage || Avatar.src}
+            alt={profileData.name}
             className="h-full w-full object-cover"
           />
         </div>
@@ -49,15 +42,14 @@ const ProfileCard = () => {
       {/* Basic Information Section */}
       <div className="border-t border-gray-100 px-4 py-3">
         <h3 className="mb-3 text-base font-medium text-black">Basic Information</h3>
-        
+
         <div className="space-y-3">
-          <InfoRow label={<span className="text-black">Class & Section</span>} value={profileData.class} />
           <InfoRow label={<span className="text-black">Subject</span>} value={profileData.subject} />
           <InfoRow label={<span className="text-black">Gender</span>} value={profileData.gender} />
           <InfoRow label={<span className="text-black">Blood Group</span>} value={profileData.bloodGroup} />
-          <InfoRow label={<span className="text-black">House</span>} value={profileData.house} />
-          <InfoRow label={<span className="text-black">Language Known</span>} value={profileData.languageKnown} />
           
+          <InfoRow label={<span className="text-black">Language Known</span>} value={profileData.languageKnown} />
+
           {/* Language Tags */}
           <div className="flex items-start gap-4">
             <span className="min-w-[128px] text-sm text-black">Language</span>

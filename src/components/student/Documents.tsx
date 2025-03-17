@@ -15,9 +15,6 @@ export default function Documents({ documents }: DocumentsProps) {
     return fileName
   };
 
-
-console.log(documents)
-
   return (
     <div className="p-4 border rounded-lg bg-white">
       <h3 className="text-lg font-semibold mb-3">Documents</h3>
