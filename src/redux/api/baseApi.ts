@@ -25,17 +25,21 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-// Helper function to set a cookie
+// Helper function to set a cookie (client-side only)
 const setCookie = (name: string, value: string, days: number) => {
-  const date = new Date();
-  date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-  const expires = `expires=${date.toUTCString()}`;
-  document.cookie = `${name}=${value}; ${expires}; path=/; SameSite=Lax`;
+  if (typeof document !== 'undefined') {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = `expires=${date.toUTCString()}`;
+    document.cookie = `${name}=${value}; ${expires}; path=/; SameSite=Lax`;
+  }
 };
 
-// Helper function to delete a cookie
+// Helper function to delete a cookie (client-side only)
 const deleteCookie = (name: string) => {
-  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  if (typeof document !== 'undefined') {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  }
 };
 
 const baseQueryWithRefreshToken: BaseQueryFn<
@@ -81,10 +85,15 @@ const baseQueryWithRefreshToken: BaseQueryFn<
         
         // Dispatch logout action directly
         api.dispatch(logout());
-        localStorage.removeItem("persist:auth");
         
-        // Redirect to login
-        window.location.href = '/auth/login';
+        if (typeof localStorage !== 'undefined') {
+          localStorage.removeItem("persist:auth");
+        }
+        
+        // Redirect to login (client-side only)
+        if (typeof window !== 'undefined') {
+          window.location.href = '/auth/login';
+        }
       }
     } catch (error) {
       // Handle error - without using handleLogout
@@ -93,10 +102,15 @@ const baseQueryWithRefreshToken: BaseQueryFn<
       
       // Dispatch logout action directly
       api.dispatch(logout());
-      localStorage.removeItem("persist:auth");
       
-      // Redirect to login
-      window.location.href = '/auth/login';
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem("persist:auth");
+      }
+      
+      // Redirect to login (client-side only)
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth/login';
+      }
     }
   }
 

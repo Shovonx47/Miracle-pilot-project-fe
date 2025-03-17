@@ -24,6 +24,8 @@ const Login = () => {
 
     // Helper function to get a cookie value by name
     const getCookie = (name: string) => {
+        if (typeof document === 'undefined') return undefined;
+        
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop()?.split(';').shift();
@@ -32,6 +34,8 @@ const Login = () => {
 
     // Helper function to set a cookie
     const setCookie = (name: string, value: string, days: number) => {
+        if (typeof document === 'undefined') return;
+        
         const date = new Date();
         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
         const expires = `expires=${date.toUTCString()}`;
@@ -77,7 +81,9 @@ const Login = () => {
 
                 // Navigate to home page - use client-side navigation
                 setTimeout(() => {
-                    window.location.href = '/';
+                    if (typeof window !== 'undefined') {
+                        window.location.href = '/';
+                    }
                 }, 100);
             } else if (response.success === false && response.errorSources) {
                 const errorMessage = response.errorSources.map((err: any) => err.message).join(", ");
