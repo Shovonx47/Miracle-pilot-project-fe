@@ -5,7 +5,7 @@ import { AppDispatch } from "@/redux/store"; // Import the correct dispatch type
 
 export const handleLogout = async (dispatch: AppDispatch, isSessionExpired: boolean): Promise<void> => {
     try {
-        await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1/logout`, {
+        await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1/auth/logout`, {
             method: "POST",
             credentials: "include",
         });
