@@ -7,7 +7,7 @@ import { toast } from "sonner";
 // Use a more generic type for dispatch
 export const handleLogout = async (dispatch: any, isSessionExpired: boolean): Promise<void> => {
     try {
-        await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1/logout`, {
+        await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1/auth/logout`, {
             method: "POST",
             credentials: "include",
         });
