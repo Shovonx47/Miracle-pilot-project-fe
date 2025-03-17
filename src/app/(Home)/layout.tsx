@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/Sidebar/app-sidebar";
 import { Toaster } from "sonner";
+import SearchFilterBar from '@/components/common/SearchFilterBar';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +30,10 @@ export default function HomeLayout({
     <SidebarProvider>
       <AppSidebar />
       <main className="w-full flex flex-col min-h-screen relative">
-        <div>{children}</div>
+        <div className="p-6">
+          <SearchFilterBar />
+          {children}
+        </div>
         <div className="lg:-ml-[16rem]">
           {/* <Footer /> */}
         </div>
