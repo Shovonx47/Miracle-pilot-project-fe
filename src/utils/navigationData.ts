@@ -57,6 +57,11 @@ export const navigationData = {
             permission: "view" 
           },
           { 
+            title: "Add Expenses", 
+            url: "/accounts/add-expenses", 
+            permission: "view" 
+          },
+          { 
             title: "Add Categories", 
             url: "/accounts/add-categories", 
             permission: "add" 

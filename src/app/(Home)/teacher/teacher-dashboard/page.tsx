@@ -43,35 +43,11 @@ const studentsData = [
 export default function TeacherDashboard() {
   return (
     <div className="p-6 md:p-8 lg:p-10">
-      <div className="flex justify-between items-center mb-6">
-        <div className="relative w-full md:w-2/5">
-          <input
-            type="text"
-            placeholder="Search"
-            className="w-full max-w-full px-4 py-2 pr-10 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400"
-          />
-          <IoSearchOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
-        </div>
-        <div className="flex items-center space-x-2">
-          <div className="border border-gray-200 px-3 py-1 rounded-md flex items-center space-x-2 shadow-sm">
-            <span className="text-sm text-gray-600">Academic Year :</span>
-            <span className="text-sm font-medium">2025 / 2026</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 flex items-center justify-center border border-gray-200 shadow-sm">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            </div>
-            <div className="w-6 h-6 flex items-center justify-center border border-gray-200 shadow-sm">
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div className="flex justify-between items-center mb-3">
         <div className="flex flex-col gap-1">
-          <span className="font-bold text-headerText">All Students</span>
-          <span className="text-dataText">Dashboard / Students</span>
+          <span className="font-bold text-headerText">Teacher Dashboard</span>
+          <span className="text-dataText">Dashboard / Teacher</span>
         </div>
       </div>
 
