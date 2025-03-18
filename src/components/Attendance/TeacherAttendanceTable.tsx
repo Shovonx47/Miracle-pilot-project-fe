@@ -3,13 +3,18 @@ import React, { useEffect,  useState } from 'react';
 import { ChevronDown, Filter } from 'lucide-react';
 import { PaginationPage } from '@/components/Reusable/Pagination';
 import Image from 'next/image';
-import dayjs from "dayjs";
 import { Controller, useForm } from 'react-hook-form';
 import { Input } from '../ui/input';
 import { useAddAttendanceMutation } from '@/redux/api/Attendance/attendanceApi';
 import { toast } from 'sonner';
 
-
+// Helper function to format date as DD-MM-YYYY
+const formatDate = (date: Date): string => {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
 
 type TeacherType = {
   _id: string;
@@ -73,7 +78,7 @@ const TeacherAttendanceTable = ({ allTeachers, filterBy,
         },
         full_name: `${teacher.firstName} ${teacher.lastName || ''}`.trim(),
         designation: `${teacher.category} Teacher`,
-        date: dayjs().format("DD-MM-YYYY"),
+        date: formatDate(new Date()), // Using our helper function instead of dayjs
         present: false,
         absent: false,
         in_time: null,

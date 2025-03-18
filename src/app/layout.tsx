@@ -1,18 +1,13 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { Toaster } from "sonner";
-import Providers from "@/lib/Providers/Providers";
+import { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import Providers from '@/lib/Providers/Providers'
+import './globals.css'
+import { Toaster } from 'sonner'
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+})
 
 export const metadata: Metadata = {
   title: 'School Management System',
@@ -21,24 +16,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
-      <Providers>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          <main className="w-full flex flex-col min-h-screen relative">
-            <div>{children}</div>
-            <div className="lg:-ml-[16rem]">
-              {/* <Footer /> */}
-            </div>
-            <Toaster position="top-right" richColors duration={2000} />
-          </main>
-        </body>
-      </Providers>
+      <body className={`${inter.variable} antialiased`}>
+        <Providers>
+          {children}
+          <Toaster position="top-right" richColors duration={2000} />
+        </Providers>
+      </body>
     </html>
-  );
+  )
 }

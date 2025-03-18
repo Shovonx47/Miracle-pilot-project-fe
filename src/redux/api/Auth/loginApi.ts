@@ -9,7 +9,7 @@ const loginApi = baseApi.injectEndpoints({
                 body: info,
                 credentials: 'include',
             }),
-            // invalidatesTags: ["class_routine"],
+            invalidatesTags: ["class_routine"],
         }),
     }),
 });

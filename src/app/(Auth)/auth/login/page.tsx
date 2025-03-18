@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import loginBg from "@/assets/loginform/login_bg.jpeg";
 import miracleLogo from "@/assets/loginform/Miracle_logo.png";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 
@@ -22,6 +22,42 @@ const Login = () => {
     const dispatch = useAppDispatch();
     const router = useRouter();
 
+    // Helper function to get a cookie value by name
+    const getCookie = (name: string) => {
+        if (typeof document === 'undefined') return undefined;
+        
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop()?.split(';').shift();
+        return undefined;
+    };
+
+    // Helper function to set a cookie
+    const setCookie = (name: string, value: string, days: number) => {
+        if (typeof document === 'undefined') return;
+        
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        const expires = `expires=${date.toUTCString()}`;
+        document.cookie = `${name}=${value}; ${expires}; path=/; SameSite=Lax`;
+    };
+
+    // Check authentication on mount - with client-side only code
+    useEffect(() => {
+        // Use a client-side only approach to avoid hydration errors
+        const checkAuth = () => {
+            const refreshToken = document.cookie.includes('refreshToken');
+            const authToken = getCookie('authToken');
+            
+            if (refreshToken && authToken) {
+                dispatch(setUser({ token: authToken }));
+                router.push('/');
+            }
+        };
+        
+        checkAuth();
+    }, [dispatch, router]);
+
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -29,12 +65,26 @@ const Login = () => {
     const onSubmit = async (data: any) => {
         try {
             const response = await login(data).unwrap();
-            // const user = verifyToken(response.data) as TUser;
+            
             if (response.success) {
+                // Update Redux state
                 dispatch(setUser({ token: response.data }));
+                
+                // Set auth token cookie
+                setCookie('authToken', response.data, 7);
+                
+                // Show success message
                 toast.success(response.message);
-                router.push("/");
-                reset()
+                
+                // Reset form
+                reset();
+
+                // Navigate to home page - use client-side navigation
+                setTimeout(() => {
+                    if (typeof window !== 'undefined') {
+                        window.location.href = '/';
+                    }
+                }, 100);
             } else if (response.success === false && response.errorSources) {
                 const errorMessage = response.errorSources.map((err: any) => err.message).join(", ");
                 toast.error(errorMessage);
