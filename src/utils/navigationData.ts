@@ -28,7 +28,7 @@ export const navigationData = {
         icon: GraduationCap,
         items: [
           { title: "Add Teacher", url: "/teacher/add-teacher", permission: "add" },
-          { title: "Edit Teacher", url: "/teacher/edit-teacher", permission: "edit" },
+          // { title: "Edit Teacher", url: "/teacher/edit-teacher", permission: "edit" },
           { title: "All Teachers", url: "/teacher/all-teachers", permission: "view" },
           { title: "Teacher Dashboard", url: "/teacher/teacher-dashboard", permission: "view" },
           { title: "Teacher Details", url: "/teacher/teacher-details", permission: "view" },

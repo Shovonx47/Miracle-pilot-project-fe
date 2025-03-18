@@ -1,13 +1,33 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { IoSearchOutline } from "react-icons/io5";
-import { IoChevronDown, IoChevronUp, IoPersonOutline, IoLogOutOutline } from "react-icons/io5";
+import { IoChevronDown, IoChevronUp, IoLogOutOutline } from "react-icons/io5";
 // Remove the direct import and use the image as a prop or public path
-import Avatar from '@/assets/avatars/pe.png';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleLogout } from '@/utils/logoutFunc';
+import { RootState } from '@/redux/store';
+import { verifyToken } from '@/utils/verifyToken';
+import { TUser } from '@/redux/features/Auth/authSlice';
+import { useGetSingleUserQuery } from '@/redux/api/Auth/getUserApi';
+import { SidebarTrigger } from '../ui/sidebar';
 
 const SearchFilterBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const dispatch = useDispatch();
+
+  const isSessionExpired = false;
+
+  const userToken = useSelector((state: RootState) => state?.auth?.token);
+
+  // Get user role if token exists
+  const email = userToken ? (verifyToken(userToken) as TUser).email : "";
+
+  const { data: user, isLoading } = useGetSingleUserQuery(email)
+
+
+
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -27,8 +47,13 @@ const SearchFilterBar = () => {
     };
   }, []);
 
+  if (isLoading) {
+    return
+  }
+
   return (
     <div className="flex justify-between items-center mb-6">
+      <SidebarTrigger />
       <div className="relative w-full md:w-2/5">
         <input
           type="text"
@@ -50,52 +75,45 @@ const SearchFilterBar = () => {
             <div className="w-3 h-3 rounded-full bg-green-500"></div>
           </div>
         </div>
-        
+
         {/* User Profile Section with Dropdown */}
         <div className="relative ml-4" ref={dropdownRef}>
-          <div 
+          <div
             className="flex items-center space-x-3 cursor-pointer"
             onClick={toggleDropdown}
           >
-            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200">
-              {/* Updated image handling similar to ProfileCard component */}
-              <img
-            src={Avatar.src}
-            alt="Profile"
-            className="h-full w-full object-cover"
-          />
-            </div>
+
             <div className="flex flex-col">
-              <span className="text-sm font-medium">Username</span>
-              <span className="text-xs text-gray-500">Administrator</span>
+              <span className="text-sm font-medium"> {user?.data?.firstName} </span>
+              <span className="text-xs text-gray-500">{user?.data?.role} </span>
             </div>
             <div className="ml-1 text-gray-600">
-              {isDropdownOpen ? 
-                <IoChevronUp className="text-lg transition-transform duration-200" /> : 
+              {isDropdownOpen ?
+                <IoChevronUp className="text-lg transition-transform duration-200" /> :
                 <IoChevronDown className="text-lg transition-transform duration-200" />
               }
             </div>
           </div>
-          
+
           {/* Enhanced Dropdown Menu */}
           {isDropdownOpen && (
             <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-lg z-10 border border-gray-100 overflow-hidden transition-all duration-200 ease-in-out">
               <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
                 <p className="text-sm font-medium">Signed in as</p>
-                <p className="text-xs text-gray-600 font-medium">username@example.com</p>
+                <p className="text-xs text-gray-600 font-medium"> {user?.data?.email}</p>
               </div>
               <ul className="py-1">
-                <li>
+                {/* <li>
                   <a href="#profile" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150">
                     <IoPersonOutline className="mr-3 text-gray-500" />
                     Your Profile
                   </a>
-                </li>
+                </li> */}
                 <li className="border-t border-gray-100">
-                  <a href="#logout" className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150">
+                  <button onClick={() => handleLogout(dispatch, isSessionExpired)} className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150">
                     <IoLogOutOutline className="mr-3" />
                     Sign out
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>

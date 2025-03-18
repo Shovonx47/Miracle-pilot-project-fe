@@ -1,8 +1,24 @@
-"use client";
-import Image from "next/image";
-import avatar from "@/assets/avatars/te.png";
 
-const ProfileCard = () => {
+import Image from "next/image";
+import Link from "next/link";
+
+interface TeacherProfile {
+  _id: string;
+  teacherId: string;
+  firstName: string;
+  lastName: string;
+  profileImage: string;
+}
+
+interface TeacherProfileResponse {
+  data: TeacherProfile;
+}
+
+interface ProfileCardProps {
+  singleTeacher: TeacherProfileResponse;
+}
+
+const ProfileCard = ({ singleTeacher }: ProfileCardProps) => {
   return (
     <div className="bg-[#1A1C46] text-white p-6 rounded-lg w-full max-w-md">
       <div className="flex flex-col gap-4">
@@ -11,23 +27,27 @@ const ProfileCard = () => {
           <div className="flex items-center gap-4">
             <div className="relative">
               <Image 
-                src={avatar}
-                alt="Student"
+                src={singleTeacher?.data?.profileImage}
+                alt="Teacher"
                 width={60}
                 height={60}
-                className=""
+                className="rounded-full"
               />
             </div>
             <div>
-              <div className="text-xs text-[#3D5EE1] mb-1">#AZ09877</div>
-              <h3 className="text-lg font-semibold">Maria Shekh</h3>
-              <p className="text-sm text-gray-300">Class: III</p>
-              <p className="text-sm text-gray-300">Roll No: 777</p>
+              <div className="text-xs text-[#3D5EE1] mb-1">
+                {singleTeacher?.data?.teacherId}
+              </div>
+              <h3 className="text-lg font-semibold">
+                {singleTeacher?.data?.firstName} {singleTeacher?.data?.lastName}
+              </h3>
             </div>
           </div>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition-colors">
-            Edit Profile
-          </button>
+          <Link href={`/teacher/edit-teacher/${singleTeacher?.data?._id}`}>
+            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition-colors">
+              Edit Profile
+            </button>
+          </Link>
         </div>
       </div>
     </div>
