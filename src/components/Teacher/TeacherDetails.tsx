@@ -36,8 +36,6 @@ export default function TeacherDetailsPage() {
     const { data: singleTeacher, isLoading } = useGetSingleTeacherQuery(email)
 
 
-    console.log(singleTeacher)
-
     const profileData = {
         id: singleTeacher?.data?.teacherId,
         name: singleTeacher?.data?.firstName + " " + singleTeacher?.data?.lastName,
