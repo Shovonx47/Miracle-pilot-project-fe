@@ -29,8 +29,13 @@ const formSections = [
     Documents
 ];
 
-const UpdateTeacherForm = () => {
-    const id = "67a6fd840b1e4a0655e440cb"
+
+interface UpdateTeacherFormProps {
+    id: string;
+}
+
+const UpdateTeacherForm: React.FC<UpdateTeacherFormProps> = ({ id }) => {
+    // const id = "67a6fd840b1e4a0655e440cb"
 
     const { control, handleSubmit, setValue, watch, trigger } = useForm({});
 

@@ -6,16 +6,17 @@ interface ProfileDetailsProps {
   dob: string;
   maritalStatus: string;
   qualification: string;
-  experience: string;
+  category: string;
+
 }
 
 const ProfileDetails: React.FC<ProfileDetailsProps> = ({
-  fatherName = "Zaman",
-  motherName = "Julia Zaman",
-  dob = "25 June 1989",
-  maritalStatus = "Married",
-  qualification = "MBA",
-  experience = "10 Years"
+  fatherName,
+  motherName,
+  dob,
+  maritalStatus,
+  qualification,
+  category
 }) => {
   return (
     <div className="w-full bg-white">
@@ -54,8 +55,8 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
             </div>
             
             <div>
-              <h3 className="text-sm font-medium text-[#202C4B] mb-1">Experience</h3>
-              <p className="text-gray-600 text-xs">{experience}</p>
+              <h3 className="text-sm font-medium text-[#202C4B] mb-1">Category</h3>
+              <p className="text-gray-600 text-xs">{category}</p>
             </div>
           </div>
         </div>
