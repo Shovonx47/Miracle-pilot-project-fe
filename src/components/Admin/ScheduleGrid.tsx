@@ -1,10 +1,25 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Avatar from '@/assets/avatars/ce.png';
+import { useGetAllClassRoutinesQuery } from '@/redux/api/Class-routine/classRoutineApi';
 
+// Define types for API response
+interface ClassRoutine {
+  _id: string;
+  class: string;
+  section: string;
+  teacherName: string;
+  subjectName: string;
+  subjectCode: string;
+  day: string;
+  startTime: string;
+  endTime: string;
+  roomNumber: string;
+  buildingName?: string;
+}
 
-// Define types for our data structure
+// Define types for our display structure
 interface ClassSession {
   time: string;
   subject: string;
@@ -12,6 +27,7 @@ interface ClassSession {
     name: string;
     avatar: string;
   };
+  room?: string;
 }
 
 interface DaySchedule {
@@ -20,96 +36,69 @@ interface DaySchedule {
 }
 
 const ScheduleGrid: React.FC = () => {
-  // Sample data structure
-  const schedule: DaySchedule[] = [
-    {
-      day: "Monday",
-      sessions: [
-        { time: "09:00 - 09:45 AM", subject: "Maths", teacher: { name: "Jack", avatar: "/avatars/jack.png" } },
-        { time: "09:45 - 10:30 AM", subject: "English", teacher: { name: "Hellana", avatar: "/avatars/hellana.png" } },
-        { time: "10:45 - 11:30 AM", subject: "Computer", teacher: { name: "Daniel", avatar: "/avatars/daniel.png" } },
-        { time: "11:30 - 12:15 PM", subject: "Bangla", teacher: { name: "Era", avatar: "/avatars/era.png" } },
-        { time: "01:30 - 02:15 PM", subject: "Science", teacher: { name: "Morgan", avatar: "/avatars/morgan.png" } },
-        { time: "02:15 - 03:00 PM", subject: "Chemistry", teacher: { name: "Aaron", avatar: "/avatars/aaron.png" } },
-        { time: "03:15 - 04:00 PM", subject: "Physics", teacher: { name: "Teresa", avatar: "/avatars/teresa.png" } },
-      ]
-    },
-    {
-      day: "Tuesday",
-      sessions: [
-        { time: "09:00 - 09:45 AM", subject: "Bangla", teacher: { name: "Era", avatar: "/avatars/era.png" } },
-        { time: "09:45 - 10:30 AM", subject: "Physics", teacher: { name: "Teresa", avatar: "/avatars/teresa.png" } },
-        { time: "10:45 - 11:30 AM", subject: "Chemistry", teacher: { name: "Aaron", avatar: "/avatars/aaron.png" } },
-        { time: "11:30 - 12:15 PM", subject: "Maths", teacher: { name: "Jack", avatar: "/avatars/jack.png" } },
-        { time: "01:30 - 02:15 PM", subject: "Computer", teacher: { name: "Daniel", avatar: "/avatars/daniel.png" } },
-        { time: "02:15 - 03:00 PM", subject: "English", teacher: { name: "Hellana", avatar: "/avatars/hellana.png" } },
-        { time: "03:15 - 04:00 PM", subject: "Science", teacher: { name: "Morgan", avatar: "/avatars/morgan.png" } },
-      ]
-    },
-    {
-      day: "Wednesday",
-      sessions: [
-        { time: "09:00 - 09:45 AM", subject: "Computer", teacher: { name: "Daniel", avatar: "/avatars/daniel.png" } },
-        { time: "09:45 - 10:30 AM", subject: "Science", teacher: { name: "Morgan", avatar: "/avatars/morgan.png" } },
-        { time: "10:45 - 11:30 AM", subject: "Maths", teacher: { name: "Jack", avatar: "/avatars/jack.png" } },
-        { time: "11:30 - 12:15 PM", subject: "Chemistry", teacher: { name: "Aaron", avatar: "/avatars/aaron.png" } },
-        { time: "01:30 - 02:15 PM", subject: "Physics", teacher: { name: "Teresa", avatar: "/avatars/teresa.png" } },
-        { time: "02:15 - 03:00 PM", subject: "English", teacher: { name: "Hellana", avatar: "/avatars/hellana.png" } },
-        { time: "03:15 - 04:00 PM", subject: "Bangla", teacher: { name: "Era", avatar: "/avatars/era.png" } },
-      ]
-    },
-    {
-      day: "Thursday",
-      sessions: [
-        { time: "09:00 - 09:45 AM", subject: "Physics", teacher: { name: "Teresa", avatar: "/avatars/teresa.png" } },
-        { time: "09:45 - 10:30 AM", subject: "Computer", teacher: { name: "Daniel", avatar: "/avatars/daniel.png" } },
-        { time: "10:45 - 11:30 AM", subject: "English", teacher: { name: "Hellana", avatar: "/avatars/hellana.png" } },
-        { time: "11:30 - 12:15 PM", subject: "Science", teacher: { name: "Morgan", avatar: "/avatars/morgan.png" } },
-        { time: "01:30 - 02:15 PM", subject: "Bangla", teacher: { name: "Era", avatar: "/avatars/era.png" } },
-        { time: "02:15 - 03:00 PM", subject: "Chemistry", teacher: { name: "Aaron", avatar: "/avatars/aaron.png" } },
-        { time: "03:15 - 04:00 PM", subject: "Maths", teacher: { name: "Jack", avatar: "/avatars/jack.png" } },
-      ]
-    },
-    {
-      day: "Friday",
-      sessions: [
-        { time: "09:00 - 09:45 AM", subject: "English", teacher: { name: "Hellana", avatar: "/avatars/hellana.png" } },
-        { time: "09:45 - 10:30 AM", subject: "Bangla", teacher: { name: "Era", avatar: "/avatars/era.png" } },
-        { time: "10:45 - 11:30 AM", subject: "Physics", teacher: { name: "Teresa", avatar: "/avatars/teresa.png" } },
-        { time: "11:30 - 12:15 PM", subject: "Chemistry", teacher: { name: "Aaron", avatar: "/avatars/aaron.png" } },
-        { time: "01:30 - 02:15 PM", subject: "Maths", teacher: { name: "Jack", avatar: "/avatars/jack.png" } },
-        { time: "02:15 - 03:00 PM", subject: "Computer", teacher: { name: "Daniel", avatar: "/avatars/daniel.png" } },
-        { time: "03:15 - 04:00 PM", subject: "Science", teacher: { name: "Morgan", avatar: "/avatars/morgan.png" } },
-      ]
-    },
-    {
-      day: "Saturday",
-      sessions: [
-        { time: "09:00 - 09:45 AM", subject: "English", teacher: { name: "Hellana", avatar: "/avatars/hellana.png" } },
-        { time: "09:45 - 10:30 AM", subject: "Bangla", teacher: { name: "Era", avatar: "/avatars/era.png" } },
-        { time: "10:45 - 11:30 AM", subject: "Physics", teacher: { name: "Teresa", avatar: "/avatars/teresa.png" } },
-        { time: "11:30 - 12:15 PM", subject: "Chemistry", teacher: { name: "Aaron", avatar: "/avatars/aaron.png" } },
-        { time: "01:30 - 02:15 PM", subject: "Maths", teacher: { name: "Jack", avatar: "/avatars/jack.png" } },
-        { time: "02:15 - 03:00 PM", subject: "Computer", teacher: { name: "Daniel", avatar: "/avatars/daniel.png" } },
-        { time: "03:15 - 04:00 PM", subject: "Science", teacher: { name: "Morgan", avatar: "/avatars/morgan.png" } },
-      ]
-    },
-  ];
-
+  // Fetch class routine data using Redux RTK Query
+  const { data: classRoutineData, isLoading, isError } = useGetAllClassRoutinesQuery({});
+  
+  // State for processed schedule data
+  const [schedule, setSchedule] = useState<DaySchedule[]>([]);
+  
+  // State for the selected subject filter
+  const [selectedSubject, setSelectedSubject] = useState<string>("");
+  
+  // Process API data into our display format when data is loaded
+  useEffect(() => {
+    if (classRoutineData?.data?.data) {
+      const routines = classRoutineData.data.data;
+      
+      // Create a map to hold sessions for each day
+      const dayMap = new Map<string, ClassSession[]>();
+      
+      // Initialize days of the week
+      const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+      daysOfWeek.forEach(day => dayMap.set(day, []));
+      
+      // Process each routine into the appropriate day
+      routines.forEach((routine: ClassRoutine) => {
+        const session: ClassSession = {
+          time: `${routine.startTime} - ${routine.endTime}`,
+          subject: routine.subjectName,
+          teacher: {
+            name: routine.teacherName,
+            avatar: "/avatars/avatar.png" // Default avatar
+          },
+          room: routine.roomNumber
+        };
+        
+        // Add session to the appropriate day
+        const day = routine.day;
+        if (dayMap.has(day)) {
+          const sessions = dayMap.get(day) || [];
+          sessions.push(session);
+          dayMap.set(day, sessions);
+        }
+      });
+      
+      // Convert map to our schedule format
+      const newSchedule: DaySchedule[] = daysOfWeek.map(day => ({
+        day,
+        sessions: dayMap.get(day) || []
+      }));
+      
+      setSchedule(newSchedule);
+    }
+  }, [classRoutineData]);
+  
   // Get all unique subjects for the filter dropdown
   const allSubjects = Array.from(
     new Set(schedule.flatMap(day => day.sessions.map(session => session.subject)))
   );
 
-  // State for the selected subject filter
-  const [selectedSubject, setSelectedSubject] = useState<string>("");
-
   // Function to determine background color based on subject
   const getSubjectBgColor = (subject: string): string => {
     const colors: Record<string, string> = {
-      "Maths": "bg-blue-50",
+      "Math": "bg-blue-50",
       "English": "bg-green-50",
-      "Computer": "bg-blue-50",
+      "Computer Science": "bg-blue-50",
       "Bangla": "bg-green-50",
       "Science": "bg-blue-50",
       "Chemistry": "bg-blue-50",
@@ -125,6 +114,14 @@ const ScheduleGrid: React.FC = () => {
       ? day.sessions.filter(session => session.subject === selectedSubject)
       : day.sessions
   }));
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-64">Loading schedule...</div>;
+  }
+
+  if (isError) {
+    return <div className="flex justify-center items-center h-64">Error loading schedule. Please try again.</div>;
+  }
 
   return (
     <div className="relative bg-[#FAFAFA]">
@@ -166,6 +163,7 @@ const ScheduleGrid: React.FC = () => {
                 >
                   <div className="text-sm text-gray-600">{session.time}</div>
                   <div className="text-xs">Subject: {session.subject}</div>
+                  {session.room && <div className="text-xs">Room: {session.room}</div>}
 
                   <div className="mt-2 bg-white p-2 rounded-lg">
                     <div className="flex items-center">
