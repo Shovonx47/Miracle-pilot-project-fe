@@ -10,7 +10,7 @@ import {
 import AllStaffsTable from "@/components/Staff/All Staffs/AllStaffTable";
 import Link from 'next/link';
 
-export default function AllStudentsPage() {
+export default function AllStaffsPage() {
   return (
     <div className="p-6 md:p-8 lg:p-10">
 
@@ -31,7 +31,7 @@ export default function AllStudentsPage() {
               <SelectItem value="csv">Export as CSV</SelectItem>
             </SelectContent>
           </Select>
-          <Link href="/teacher/all-teachers">
+          <Link href="/staff/add-staff">
             <button className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
               Add Staff
             </button>

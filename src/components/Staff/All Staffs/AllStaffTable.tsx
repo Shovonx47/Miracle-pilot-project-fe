@@ -105,7 +105,7 @@ const AllStaffTable = () => {
           </thead>
           {staffData?.data?.data?.length > 0 && (
             <tbody className="text-sm font-medium text-[#515B73]">
-              {staffData.data.data.map((staff: any) => (
+              {staffData?.data?.data?.map((staff: any) => (
                 <tr key={staff._id} className="border-b">
                   <td className="p-4">
                     <input type="checkbox" className="rounded" />
@@ -149,7 +149,7 @@ const AllStaffTable = () => {
       <div className="flex justify-end p-6">
         <div className="flex items-center gap-2">
           <PaginationPage 
-            totalPages={staffData?.data?.meta?.totalPage || 0} 
+            totalPages={staffData?.data?.meta?.totalPage} 
             page={page} 
             setPage={setPage} 
           />
