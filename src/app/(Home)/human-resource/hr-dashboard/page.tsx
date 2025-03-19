@@ -1,3 +1,11 @@
+"use client"
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { verifyToken } from '@/utils/verifyToken';
+import { TUser } from '@/redux/features/Auth/authSlice';
+import { useGetSingleAdminQuery } from '@/redux/api/Admin/adminApi';
+import LoadingSpinner from '@/components/Loader';
+
 import { IoSearchOutline } from "react-icons/io5";
 import MorningNotification from "@/components/Staff/Admin/Admin Dashboard/MorningNotification";
 import DashboardMetrics from "@/components/Staff/Admin/Admin Dashboard/DashboardMetrics";
@@ -14,6 +22,21 @@ import StudentActivity from "@/components/Staff/Admin/Admin Dashboard/StudentAct
 import TodoList from "@/components/Staff/Admin/Admin Dashboard/TodoList";
 
 export default function HrDashboard() {
+  const userToken = useSelector((state: RootState) => state?.auth?.token);
+
+  // Get user email if token exists
+  let email = "";
+  if (userToken) {
+    const userId = (verifyToken(userToken) as TUser);
+    email = userId?.email ?? "";
+  }
+
+  const { data: singleAdmin, isLoading } = useGetSingleAdminQuery(email);
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <div className="p-6 md:p-8 lg:p-10">
       <div className="flex justify-between items-center mb-6">
@@ -30,7 +53,7 @@ export default function HrDashboard() {
           </button>
         </div>
       </div>
-      <MorningNotification name="Najmus Sakib" />
+      <MorningNotification name={`${singleAdmin?.data?.firstName} ${singleAdmin?.data?.lastName}`} />
       <DashboardMetrics />
       {/* Update the grid layout structure */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
