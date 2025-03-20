@@ -1,24 +1,81 @@
 // components/FinancialTable.tsx
 import React from 'react';
+import { useGetAllTransactionsQuery } from '@/redux/api/transaction/transactionApi';
 
-interface FinancialEntry {
-  particular: string;
-  type: 'Income' | 'Expense';
-  subCategory: string;
-  receipt?: string;
-  payment?: string;
-  balance?: string;
+interface Transaction {
+  _id: string;
+  transactionCategory: string;
+  transactionSubCategory: string;
+  amount: number;
+  transactionType: 'Income' | 'Expense';
+  transactionDate: string;
+  transactionId: string;
 }
 
 const FinancialTable = () => {
-  const financialData: FinancialEntry[] = [
-    { particular: 'Opening Balance', type: 'Income', subCategory: 'Account', receipt: '$25,0000' },
-    { particular: 'Student Fees', type: 'Income', subCategory: 'Fees', receipt: '$15,000' },
-    { particular: 'Admission/Booking', type: 'Income', subCategory: 'Admission', receipt: '$10,000' },
-    { particular: 'Bills', type: 'Expense', subCategory: 'Transportation', payment: '$3,000' },
-    { particular: 'Salary', type: 'Expense', subCategory: 'Employee', payment: '$1,00000' },
-    { particular: 'Commission', type: 'Expense', subCategory: 'Influencer', payment: '$2,000' },
-  ];
+  // Get yesterday's date formatted as YYYY-MM-DD for API
+  const getFormattedDate = () => {
+    const today = new Date();
+    // Get yesterday by going back 1 day from today
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    
+    // Set the time to start of day (00:00:00)
+    yesterday.setHours(0, 0, 0, 0);
+    
+    return yesterday.toISOString().slice(0, 10); // Returns YYYY-MM-DD format
+  };
+
+  const formattedDate = getFormattedDate();
+  console.log("Fetching transactions for:", formattedDate); // Debug log
+
+  const { data: transactionData, isLoading, isError } = useGetAllTransactionsQuery({
+    startDate: formattedDate,
+    endDate: formattedDate
+  });
+
+  // Debug log
+  console.log("API Response:", transactionData);
+
+  if (isLoading) {
+    return <div className="text-center p-4">Loading...</div>;
+  }
+
+  if (isError) {
+    return <div className="text-center p-4 text-red-500">Error loading transactions</div>;
+  }
+
+  const transactions: Transaction[] = (transactionData?.data?.data || []).map((item) => ({
+    ...item,
+    transactionType: item.transactionType as 'Income' | 'Expense',
+  }));
+
+  if (transactions.length === 0) {
+    return <div className="text-center p-4">No transactions for Yesterday</div>;
+  }
+
+  const totalIncome = transactions
+    .filter(item => item.transactionType === 'Income')
+    .reduce((sum, item) => sum + item.amount, 0);
+
+  const totalExpense = transactions
+    .filter(item => item.transactionType === 'Expense')
+    .reduce((sum, item) => sum + item.amount, 0);
+
+  const cashInHand = totalIncome - totalExpense;
+
+  const calculateBalance = (index: number): number => {
+    let runningBalance = 0;
+    for (let i = 0; i <= index; i++) {
+      const transaction = transactions[i];
+      if (transaction.transactionType === 'Income') {
+        runningBalance += transaction.amount;
+      } else {
+        runningBalance -= transaction.amount;
+      }
+    }
+    return runningBalance;
+  };
 
   return (
     <div className="max-w-6xl mx-auto p-4 text-sm">
@@ -35,20 +92,24 @@ const FinancialTable = () => {
             </tr>
           </thead>
           <tbody className="text-sm">
-            {financialData.map((item, index) => (
-              <tr key={index} className="border-b">
-                <td className="p-3 text-gray-700">{item.particular}</td>
-                <td className="p-3 text-gray-700">{item.type}</td>
-                <td className="p-3 text-gray-700">{item.subCategory}</td>
-                <td className="p-3 text-gray-700">{item.receipt || ''}</td>
-                <td className="p-3 text-gray-700">{item.payment || ''}</td>
-                <td className="p-3 text-gray-700"></td>
+            {transactions.map((item, index) => (
+              <tr key={item._id} className="border-b">
+                <td className="p-3 text-gray-700">{item.transactionCategory}</td>
+                <td className="p-3 text-gray-700">{item.transactionType}</td>
+                <td className="p-3 text-gray-700">{item.transactionSubCategory}</td>
+                <td className="p-3 text-gray-700">
+                  {item.transactionType === 'Income' ? `$${item.amount.toLocaleString()}` : ''}
+                </td>
+                <td className="p-3 text-gray-700">
+                  {item.transactionType === 'Expense' ? `$${item.amount.toLocaleString()}` : ''}
+                </td>
+                <td className="p-3 text-gray-700">${calculateBalance(index).toLocaleString()}</td>
               </tr>
             ))}
             
             <tr className="border-b">
-              <td colSpan={3} className="p-3 text-green-600 font-medium">Total Receive</td>
-              <td className="p-3 text-green-600 font-medium">$4,50000</td>
+              <td colSpan={3} className="p-3 text-green-600 font-medium">Total Income</td>
+              <td className="p-3 text-green-600 font-medium">${totalIncome.toLocaleString()}</td>
               <td></td>
               <td></td>
             </tr>
@@ -56,7 +117,7 @@ const FinancialTable = () => {
             <tr className="border-b">
               <td colSpan={3} className="p-3 text-red-600 font-medium">Total Expense</td>
               <td></td>
-              <td className="p-3 text-red-600 font-medium">$1,05000</td>
+              <td className="p-3 text-red-600 font-medium">${totalExpense.toLocaleString()}</td>
               <td></td>
             </tr>
             
@@ -64,7 +125,7 @@ const FinancialTable = () => {
               <td colSpan={3} className="p-3 text-blue-600 font-medium">Cash In Hand</td>
               <td></td>
               <td></td>
-              <td className="p-3 text-blue-600 font-medium">$3,45000</td>
+              <td className="p-3 text-blue-600 font-medium">${cashInHand.toLocaleString()}</td>
             </tr>
           </tbody>
         </table>

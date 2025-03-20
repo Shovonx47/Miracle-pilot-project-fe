@@ -2,90 +2,48 @@
 import React, { useState } from 'react';
 import { ChevronDown, Filter } from 'lucide-react';
 import { PaginationPage } from '@/components/Reusable/Pagination';
+import { useGetAllTransactionsQuery } from '@/redux/api/transaction/transactionApi';
+import LoadingSpinner from '@/components/Loader';
+import { Transaction } from '@/types/transaction';
 
 const PaymentTable = () => {
-  const [filterBy, setFilterBy] = useState('Paid');
+  const [selectedDate, setSelectedDate] = useState('');
   const [sortBy, setSortBy] = useState('type');
   const [searchData, setSearchData] = useState('');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
 
-  // Dummy data for payments with new structure
-  const dummyPayments = [
-    {
-      no: "001",
-      type: "Invoice",
-      category: "Operations",
-      subCategory: "Office Supplies",
-      amount: "$1,250",
-      mode: "Bank Transfer",
-      status: "Paid"
-    },
-    {
-      no: "002",
-      type: "Expense",
-      category: "Marketing",
-      subCategory: "Advertising",
-      amount: "$2,500",
-      mode: "Credit Card",
-      status: "Generated"
-    },
-    {
-      no: "003",
-      type: "Salary",
-      category: "HR",
-      subCategory: "Regular Staff",
-      amount: "$3,800",
-      mode: "Direct Deposit",
-      status: "Paid"
-    },
-    {
-      no: "004",
-      type: "Vendor",
-      category: "Procurement",
-      subCategory: "Raw Materials",
-      amount: "$5,350",
-      mode: "Check",
-      status: "Generated"
-    },
-    {
-      no: "005",
-      type: "Utility",
-      category: "Facilities",
-      subCategory: "Electricity",
-      amount: "$975",
-      mode: "Auto-debit",
-      status: "Paid"
-    }
-  ];
+  // Fetch transactions - only send parameters if they have non-default values
+  const { data: transactionData, isLoading } = useGetAllTransactionsQuery({
+    ...(searchData && { searchTerm: searchData }),
+    ...(sortBy !== 'type' && { sortBy }),
+    ...(selectedDate && { date: selectedDate }) // Add date parameter
+  });
 
-  // Filter dummy data based on search term and status
-  const filteredPayments = dummyPayments
-    .filter(payment => 
-      (filterBy === 'all' || payment.status === filterBy) &&
-      (searchData === '' || 
-        payment.no.toLowerCase().includes(searchData.toLowerCase()) ||
-        payment.type.toLowerCase().includes(searchData.toLowerCase()) ||
-        payment.category.toLowerCase().includes(searchData.toLowerCase()) ||
-        payment.subCategory.toLowerCase().includes(searchData.toLowerCase()))
-    )
-    .sort((a, b) => {
-      if (sortBy === 'type') {
-        return a.type.localeCompare(b.type);
-      } else if (sortBy === '-type') {
-        return b.type.localeCompare(a.type);
-      }
-      return 0;
-    });
+  // Get today's date in YYYY-MM-DD format for max date restriction
+  const today = new Date().toISOString().split('T')[0];
 
-  // Paginate data
-  const paginatedPayments = filteredPayments.slice((page - 1) * limit, page * limit);
-  const totalPages = Math.ceil(filteredPayments.length / limit);
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  // Get the transactions array and pagination data
+  const transactions = transactionData?.data?.data || [];
+  const totalPages = Math.ceil((transactionData?.data?.meta?.total || 0) / limit);
 
   // Function to handle submit action
-  const handleSubmit = (no: string) => {
-    console.log(`Submitting payment ${no}`);
-    // This would typically submit the payment to the backend
+  const handleSubmit = (id: string) => {
+    console.log(`Submitting payment ${id}`);
+  };
+
+  // Format the date when displaying in table
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
   };
 
   return (
@@ -94,32 +52,15 @@ const PaymentTable = () => {
         <h1 className="text-xl font-semibold text-gray-800">Income and Expense</h1>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="border border-gray-200 py-1 px-2">
-              <span className="text-sm text-gray-600">01/02/2025 - 28/02/2025</span>
-            </div>
             <div className="relative">
-              <select
-                value={filterBy}
-                onChange={(e) => setFilterBy(e.target.value)}
-                className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">Filters</option>
-                <option value="Paid">Paid</option>
-                <option value="Generated">Generated</option>
-              </select>
-              <Filter className="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
+              <input
+                type="date"
+                value={selectedDate}
+                max={today}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="appearance-none bg-white border rounded px-3 py-1 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
-          </div>
-          <div className="relative">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="type">Type Ascending</option>
-              <option value="-type">Type Descending</option>
-            </select>
-            <ChevronDown className="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
           </div>
         </div>
       </div>
@@ -158,51 +99,42 @@ const PaymentTable = () => {
               <th className="w-4 p-4 -mx-6">
                 <input type="checkbox" className="rounded" />
               </th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">No</th>
+              <th className="p-4 text-left text-sm font-semibold text-gray-600">ID</th>
               <th className="p-4 text-left text-sm font-semibold text-gray-600">Type</th>
               <th className="p-4 text-left text-sm font-semibold text-gray-600">Category</th>
               <th className="p-4 text-left text-sm font-semibold text-gray-600">Sub Category</th>
               <th className="p-4 text-left text-sm font-semibold text-gray-600">Amount</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Mode</th>
+              <th className="p-4 text-left text-sm font-semibold text-gray-600">Transaction Date</th>
               <th className="p-4 text-left text-sm font-semibold text-gray-600">Status</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Submit</th>
+              <th className="p-4 text-left text-sm font-semibold text-gray-600">Action</th>
             </tr>
           </thead>
-          {paginatedPayments.length > 0 && (
+          {transactions.length > 0 && (
             <tbody className="text-sm font-medium text-[#515B73]">
-              {paginatedPayments.map((payment, index) => (
-                <tr key={index} className="border-b">
+              {transactions.map((transaction: Transaction) => (
+                <tr key={transaction._id} className="border-b">
                   <td className="p-4">
                     <input type="checkbox" className="rounded" />
                   </td>
                   <td className="p-4">
-                    <span className="text-blue-600">{payment.no}</span>
+                    <span className="text-blue-600">{transaction.transactionId}</span>
                   </td>
-                  <td className="p-4">{payment.type}</td>
-                  <td className="p-4">{payment.category}</td>
-                  <td className="p-4">{payment.subCategory}</td>
-                  <td className="p-4">{payment.amount}</td>
-                  <td className="p-4">{payment.mode}</td>
+                  <td className="p-4">{transaction.transactionType}</td>
+                  <td className="p-4">{transaction.transactionCategory}</td>
+                  <td className="p-4">{transaction.transactionSubCategory}</td>
+                  <td className="p-4">${transaction.amount.toLocaleString()}</td>
+                  <td className="p-4">{formatDate(transaction.transactionDate)}</td>
                   <td className="p-4">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      payment.status === 'Paid' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {payment.status}
+                    <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
+                      Paid
                     </span>
                   </td>
                   <td className="p-4">
                     <button
-                      onClick={() => handleSubmit(payment.no)}
-                      style={{
-                        backgroundColor: payment.status === 'Paid' ? '#007AFF26' : '#FFC0C0',
-                        color: payment.status === 'Paid' ? '#2A52BE' : '#FF0000',
-                        border: `1px solid ${payment.status === 'Paid' ? '#2A52BE' : '#FF0000'}`
-                      }}
-                      className="py-1 px-3 rounded text-sm"
+                      onClick={() => handleSubmit(transaction.transactionId)}
+                      className="bg-blue-100 text-blue-800 py-1 px-3 rounded text-sm border border-blue-800"
                     >
-                      {payment.status === 'Paid' ? 'Submit' : 'Pending'}
+                      Submit
                     </button>
                   </td>
                 </tr>
@@ -210,7 +142,7 @@ const PaymentTable = () => {
             </tbody>
           )}
         </table>
-        {paginatedPayments.length === 0 && (
+        {transactions.length === 0 && (
           <div className='h-40 flex items-center justify-center w-full'>No data found.</div>
         )}
       </div>
