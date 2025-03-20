@@ -1,85 +1,92 @@
 "use client";
 import React, { useState } from 'react';
 import { ChevronDown, Filter } from 'lucide-react';
-import { PaginationPage } from '@/components/Reusable/Pagination';
+import { useCreateTransactionTypeMutation, useGetAllTransactionTypesQuery } from '@/redux/api/transactionTypeApi';
+import { toast } from 'sonner';
 
-// Define the Category type
+// Update the Category interface to match API response
 interface Category {
-  id: number;
-  no: string;
+  _id: string;
   type: string;
   category: string;
   subCategory: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const CategoryManagementTable = () => {
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [searchData, setSearchData] = useState('');
   const [filterBy, setFilterBy] = useState('all');
   const [sortBy, setSortBy] = useState('a-z');
-  const [startDate, setStartDate] = useState('02/28/2025');
-  const [endDate, setEndDate] = useState('03/11/2025');
 
-  // Dummy data for categories
-  const dummyCategories: Category[] = [
-    { id: 1, no: "1", type: "Expense", category: "Salary", subCategory: "Staff" },
-    { id: 2, no: "2", type: "Expense", category: "Salary", subCategory: "Teachers" },
-    { id: 3, no: "3", type: "Expense", category: "Bills", subCategory: "Books" },
-    { id: 4, no: "4", type: "Income", category: "Fees", subCategory: "Hostel" },
-    { id: 5, no: "5", type: "Expense", category: "Bills", subCategory: "Transportation" },
-    { id: 6, no: "6", type: "Expense", category: "Fees", subCategory: "Admission" },
-    { id: 7, no: "7", type: "Expense", category: "Donation", subCategory: "Scholarship" },
-    { id: 8, no: "8", type: "Expense", category: "Bills", subCategory: "Food" },
-    { id: 9, no: "9", type: "Expense", category: "Salary", subCategory: "Guest Teacher" },
-    { id: 10, no: "10", type: "Expense", category: "Bills", subCategory: "Marketing" }
-  ];
+  const [formData, setFormData] = useState({
+    no: '',
+    type: '',
+    category: '',
+    subCategory: ''
+  });
 
-  // Filter dummy data based on search term and type
-  const filteredCategories = dummyCategories
-    .filter(category => 
-      (filterBy === 'all' || category.type === filterBy) &&
-      (searchData === '' || 
-        category.no.toLowerCase().includes(searchData.toLowerCase()) ||
-        category.type.toLowerCase().includes(searchData.toLowerCase()) ||
-        category.category.toLowerCase().includes(searchData.toLowerCase()) ||
-        category.subCategory.toLowerCase().includes(searchData.toLowerCase()))
-    )
-    .sort((a, b) => {
-      if (sortBy === 'a-z') {
-        return a.category.localeCompare(b.category);
-      } else if (sortBy === 'z-a') {
-        return b.category.localeCompare(a.category);
-      }
-      return 0;
+  const [createTransactionType, { isLoading: isSubmitting }] = useCreateTransactionTypeMutation();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
     });
+  };
 
-  // Paginate data
-  const paginatedCategories = filteredCategories.slice((page - 1) * limit, page * limit);
-  const totalPages = Math.ceil(filteredCategories.length / limit);
+  // Replace dummy data with API query
+  const query: Record<string, any> = {};
+
+  if (searchData) {
+    query.searchTerm = searchData;
+  }
+
+  if (filterBy !== 'all') {
+    query.type = filterBy;
+  }
+
+  const { data: transactionTypesData, isLoading } = useGetAllTransactionTypesQuery({});
+
+  // Update the filtering logic to use API data
+  const filteredCategories = transactionTypesData?.data || [];
 
   // Handle checkbox selection
-  const handleSelectItem = (id: number) => {
-    if (selectedItems.includes(id)) {
-      setSelectedItems(selectedItems.filter(item => item !== id));
+  const handleSelectItem = (_id: string) => {
+    if (selectedItems.includes(_id)) {
+      setSelectedItems(selectedItems.filter(item => item !== _id));
     } else {
-      setSelectedItems([...selectedItems, id]);
+      setSelectedItems([...selectedItems, _id]);
     }
   };
 
   // Handle select all
   const handleSelectAll = () => {
-    if (selectedItems.length === paginatedCategories.length) {
+    if (selectedItems.length === filteredCategories.length) {
       setSelectedItems([]);
     } else {
-      setSelectedItems(paginatedCategories.map(item => item.id));
+      setSelectedItems(filteredCategories.map(item => item._id));
     }
   };
 
   // Handle submit
-  const handleSubmit = () => {
-    console.log('Submitting selected categories:', selectedItems);
+  const handleSubmit = async () => {
+    try {
+      const result = await createTransactionType(formData).unwrap();
+      toast.success('Category added successfully');
+      // Reset form
+      setFormData({
+        no: '',
+        type: '',
+        category: '',
+        subCategory: ''
+      });
+    } catch (error: any) {
+      toast.error(error?.data?.message || 'Failed to add category');
+    }
   };
 
   return (
@@ -87,11 +94,6 @@ const CategoryManagementTable = () => {
       <div className="flex justify-between items-center p-4 border-b">
         <h1 className="text-xl font-medium">Add Category</h1>
         <div className="flex items-center gap-4">
-          <div className="flex items-center">
-            <div className="border px-3 py-1 text-sm text-gray-600">
-              {startDate} - {endDate}
-            </div>
-          </div>
           <div className="relative">
             <select
               value={filterBy}
@@ -120,49 +122,59 @@ const CategoryManagementTable = () => {
 
       <div className="flex">
         {/* Left sidebar with form */}
-        {/* Left sidebar with form */}
-<div className="w-44 border-r p-4">
-  <div className="mb-4">
-    <input
-      type="text"
-      placeholder="No"
-      className="w-full h-10 px-3 py-2 bg-white border rounded text-sm"
-    />
-  </div>
+        <div className="w-44 border-r p-4">
+          <div className="mb-4">
+            <input
+              type="text"
+              name="no"
+              placeholder="No"
+              value={formData.no}
+              onChange={handleInputChange}
+              className="w-full h-10 px-3 py-2 bg-white border rounded text-sm"
+            />
+          </div>
 
-  <div className="mb-4">
-    <select
-      className="w-full h-10 px-3 py-2 bg-white border rounded text-sm appearance-none"
-    >
-      <option value="" disabled selected>Type</option>
-      <option value="Income">Income</option>
-      <option value="Expense">Expense</option>
-    </select>
-  </div>
+          <div className="mb-4">
+            <input
+              type="text"
+              name="type"
+              placeholder="Type"
+              value={formData.type}
+              onChange={handleInputChange}
+              className="w-full h-10 px-3 py-2 bg-white border rounded text-sm"
+            />
+          </div>
 
-  <div className="mb-4">
-    <input
-      type="text"
-      placeholder="Category"
-      className="w-full h-10 px-3 py-2 bg-white border rounded text-sm"
-    />
-  </div>
+          <div className="mb-4">
+            <input
+              type="text"
+              name="category"
+              placeholder="Category"
+              value={formData.category}
+              onChange={handleInputChange}
+              className="w-full h-10 px-3 py-2 bg-white border rounded text-sm"
+            />
+          </div>
 
-  <div className="mb-4">
-    <input
-      type="text"
-      placeholder="Sub-Category"
-      className="w-full h-10 px-3 py-2 bg-white border rounded text-sm"
-    />
-  </div>
+          <div className="mb-4">
+            <input
+              type="text"
+              name="subCategory"
+              placeholder="Sub-Category"
+              value={formData.subCategory}
+              onChange={handleInputChange}
+              className="w-full h-10 px-3 py-2 bg-white border rounded text-sm"
+            />
+          </div>
 
-  <button 
-    onClick={handleSubmit}
-    className="w-full py-2 bg-blue-600 text-white font-medium rounded text-center"
-  >
-    SUBMIT
-  </button>
-</div>
+          <button 
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="w-full py-2 bg-blue-600 text-white font-medium rounded text-center disabled:bg-blue-400"
+          >
+            {isSubmitting ? 'SUBMITTING...' : 'SUBMIT'}
+          </button>
+        </div>
 
         {/* Main content with table */}
         <div className="flex-1">
@@ -199,13 +211,13 @@ const CategoryManagementTable = () => {
                     <input 
                       type="checkbox" 
                       className="rounded" 
-                      checked={selectedItems.length === paginatedCategories.length && paginatedCategories.length > 0}
+                      checked={selectedItems.length === filteredCategories.length && filteredCategories.length > 0}
                       onChange={handleSelectAll}
                     />
                   </th>
                   <th className="p-4 text-left text-sm font-medium text-gray-600 border-r">
                     <div className="flex items-center justify-between">
-                      <span>No</span>
+                      <span>Id</span>
                       <ChevronDown className="w-4 h-4 text-gray-400" />
                     </div>
                   </th>
@@ -230,31 +242,38 @@ const CategoryManagementTable = () => {
                 </tr>
               </thead>
               <tbody>
-                {paginatedCategories.map((category) => (
-                  <tr key={category.id} className="border-b hover:bg-gray-50">
-                    <td className="p-4 text-center">
-                      <input 
-                        type="checkbox" 
-                        className="rounded" 
-                        checked={selectedItems.includes(category.id)}
-                        onChange={() => handleSelectItem(category.id)}
-                      />
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-4">
+                      Loading...
                     </td>
-                    <td className="p-4 text-blue-600 border-r">{category.no}</td>
-                    <td className="p-4 border-r">{category.type}</td>
-                    <td className="p-4 border-r">{category.category}</td>
-                    <td className="p-4">{category.subCategory}</td>
                   </tr>
-                ))}
+                ) : filteredCategories.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-4">
+                      No categories found
+                    </td>
+                  </tr>
+                ) : (
+                  filteredCategories.map((category) => (
+                    <tr key={category._id} className="border-b hover:bg-gray-50">
+                      <td className="p-4 text-center">
+                        <input 
+                          type="checkbox" 
+                          className="rounded" 
+                          checked={selectedItems.includes(category._id)}
+                          onChange={() => handleSelectItem(category._id)}
+                        />
+                      </td>
+                      <td className="p-4 text-blue-600 border-r">{category._id}</td>
+                      <td className="p-4 border-r">{category.type}</td>
+                      <td className="p-4 border-r">{category.category}</td>
+                      <td className="p-4">{category.subCategory}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
-          </div>
-
-          {/* Pagination using the PaginationPage component from sample code */}
-          <div className="flex justify-end p-6">
-            <div className="flex items-center gap-2">
-              <PaginationPage totalPages={totalPages} page={page} setPage={setPage} />
-            </div>
           </div>
         </div>
       </div>

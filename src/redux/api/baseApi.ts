@@ -132,6 +132,8 @@ export const baseApi = createApi({
     "salary",
     "attendance",
     "forgot_password",
+    "transaction",
+    "transaction_type" // Add this new tag
   ],
   endpoints: () => ({}),
 });
