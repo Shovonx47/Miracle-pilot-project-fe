@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useCreateTransactionMutation } from '@/redux/api/transaction/transactionApi';
 import { useGetAllTransactionTypesQuery } from '@/redux/api/transactionTypeApi';
-import { toast } from 'react-hot-toast';
 import { Type_of_Transaction } from '@/types/global';
+import { toast } from 'sonner';
 
 type FormData = {
   recipient: string;

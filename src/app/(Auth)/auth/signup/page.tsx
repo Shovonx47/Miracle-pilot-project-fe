@@ -34,12 +34,8 @@ const SignUp = () => {
 
 
     const onSubmit = async (data: any) => {
-        console.log(data)
         try {
             const response = await signup(data).unwrap();
-
-            console.log(response)
-            // const user = verifyToken(response.data) as TUser;
             if (response.success) {
                 toast.success(response.message);
                 router.push("/auth/login");
