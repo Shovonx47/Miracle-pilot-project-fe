@@ -1,11 +1,10 @@
+
 import { logout } from "@/redux/features/Auth/authSlice";
 import { toast } from "sonner";
-// Remove direct import from store
-// import { persistor } from "@/redux/store";
-// import { AppDispatch } from "@/redux/store";
+import { persistor } from "@/redux/store";
+import { AppDispatch } from "@/redux/store"; // Import the correct dispatch type
 
-// Use a more generic type for dispatch
-export const handleLogout = async (dispatch: any, isSessionExpired: boolean): Promise<void> => {
+export const handleLogout = async (dispatch: AppDispatch, isSessionExpired: boolean,router?: any): Promise<void> => {
     try {
         await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1/auth/logout`, {
             method: "POST",
@@ -14,20 +13,25 @@ export const handleLogout = async (dispatch: any, isSessionExpired: boolean): Pr
 
         // Remove from Redux
         dispatch(logout());
-        
-        // Instead of using persistor directly, clear localStorage
+        // Flush persisted storage to clear Redux state
+        await persistor.flush();
         localStorage.removeItem("persist:auth");
 
         // Show appropriate logout message based on the event
         if (isSessionExpired) {
             toast.warning("Your session has expired. Please log in again to continue.");
         } else {
-            toast.success("You've logged out. Come back anytime!");
-        }
+            toast.success("You’ve logged out. Come back anytime!");
+         }
 
-        // Redirect to login page
-        window.location.href = "/auth/login";
+
+         if (router?.push) {
+            router.push("/auth/login");
+        } else {
+            window.location.href = "/auth/login"; // Fallback
+        }
     } catch (error) {
+        console.log(error);
         toast.error("Logout failed. Please try again.");
     }
 };

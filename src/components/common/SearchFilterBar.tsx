@@ -10,11 +10,12 @@ import { verifyToken } from '@/utils/verifyToken';
 import { TUser } from '@/redux/features/Auth/authSlice';
 import { useGetSingleUserQuery } from '@/redux/api/Auth/getUserApi';
 import { SidebarTrigger } from '../ui/sidebar';
+import { useRouter } from 'next/navigation';
 
 const SearchFilterBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
+  const router = useRouter()
   const dispatch = useDispatch();
 
   const isSessionExpired = false;
@@ -110,7 +111,7 @@ const SearchFilterBar = () => {
                   </a>
                 </li> */}
                 <li className="border-t border-gray-100">
-                  <button onClick={() => handleLogout(dispatch, isSessionExpired)} className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150">
+                  <button onClick={() => handleLogout(dispatch, isSessionExpired, router)} className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150">
                     <IoLogOutOutline className="mr-3" />
                     Sign out
                   </button>
