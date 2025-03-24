@@ -46,7 +46,7 @@ export default function TeacherDetailsPage() {
         bloodGroup: singleTeacher?.data?.bloodGroup,
         languageKnown: singleTeacher?.data?.motherTongue,
         languages: ['Bangla', 'English']
-      };
+    };
     
 
 
@@ -63,7 +63,6 @@ export default function TeacherDetailsPage() {
         maritalStatus: singleTeacher?.data?.maritalStatus,
         qualification: singleTeacher?.data?.educationalQualification,
         category: singleTeacher?.data?.category,
-
     };
 
     const documentsData = [
@@ -84,9 +83,7 @@ export default function TeacherDetailsPage() {
 
     const workDetailsData = {
         department: singleTeacher?.data?.subject,
-
         joiningDate: singleTeacher?.data?.joiningDate,
-
         status: singleTeacher?.data?.status,
         contractType: singleTeacher?.data?.contractType,
         shift: singleTeacher?.data?.workShift,
@@ -114,12 +111,12 @@ export default function TeacherDetailsPage() {
     }
 
     return (
-        <div className="p-6 md:p-8 lg:p-10">
+        <div className="p-4 md:p-6 lg:p-10">
 
             {/* Main Content Section */}
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
                 {/* Header and Button */}
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
                     <div className="flex flex-col gap-1">
                         <span className="font-bold text-headerText">Teacher Details</span>
                         <span className="text-dataText">Teacher / Teacher Details</span>
@@ -135,10 +132,10 @@ export default function TeacherDetailsPage() {
                     </div>
                 </div>
 
-                {/* Two Column Layout */}
-                <div className="flex">
+                {/* Two Column Layout that becomes single column on mobile */}
+                <div className="flex flex-col md:flex-row">
                     {/* Left Column - Profile Information */}
-                    <div className="w-1/3 space-y-4">
+                    <div className="w-full md:w-1/3 space-y-4">
                         <ProfileCard profileData={profileData}/>
                         <PrimaryContact contact={contactData} />
                         <IdNumber idNumber={singleTeacher?.data?.teacherId}/>
@@ -146,13 +143,13 @@ export default function TeacherDetailsPage() {
                     </div>
 
                     {/* Right Column - Tabs Section */}
-                    <div className="w-3/4 -mt-14 -ml-12">
-                        {/* Tabs Navigation */}
-                        <div className="flex mb-2">
+                    <div className="w-full md:w-3/4 mt-8 md:-mt-14 md:-ml-12">
+                        {/* Tabs Navigation - Scrollable on mobile */}
+                        <div className="flex overflow-x-auto pb-2 md:overflow-visible">
                             <button
                                 key="details"
                                 onClick={() => setActiveTab('details')}
-                                className={`px-6 py-3 text-sm font-medium ${activeTab === 'details'
+                                className={`px-4 md:px-6 py-2 md:py-3 text-sm font-medium whitespace-nowrap ${activeTab === 'details'
                                     ? 'border-[#506EE4] text-[#506EE4]'
                                     : 'border-transparent text-gray-500 cursor-not-allowed'
                                     }`}
@@ -163,7 +160,7 @@ export default function TeacherDetailsPage() {
                             <button
                                 key="routine"
                                 onClick={() => setActiveTab('routine')}
-                                className="px-6 py-3 text-sm font-medium border-transparent text-gray-500 cursor-not-allowed"
+                                className="px-4 md:px-6 py-2 md:py-3 text-sm font-medium border-transparent text-gray-500 cursor-not-allowed whitespace-nowrap"
                                 disabled
                             >
                                 Routine
@@ -171,7 +168,7 @@ export default function TeacherDetailsPage() {
                             <button
                                 key="attendance"
                                 onClick={() => setActiveTab('attendance')}
-                                className="px-6 py-3 text-sm font-medium border-transparent text-gray-500 cursor-not-allowed"
+                                className="px-4 md:px-6 py-2 md:py-3 text-sm font-medium border-transparent text-gray-500 cursor-not-allowed whitespace-nowrap"
                                 disabled
                             >
                                 Leave & Attendance
@@ -179,7 +176,7 @@ export default function TeacherDetailsPage() {
                             <button
                                 key="salary"
                                 onClick={() => setActiveTab('salary')}
-                                className="px-6 py-3 text-sm font-medium border-transparent text-gray-500 cursor-not-allowed"
+                                className="px-4 md:px-6 py-2 md:py-3 text-sm font-medium border-transparent text-gray-500 cursor-not-allowed whitespace-nowrap"
                                 disabled
                             >
                                 Salary
@@ -187,28 +184,31 @@ export default function TeacherDetailsPage() {
                         </div>
 
                         {/* Tab Content */}
-                        <div className="">
+                        <div className="mt-4 md:mt-0">
                             {activeTab === 'details' && (
-                                <div className="w-full space-y-6">
+                                <div className="w-full space-y-4 md:space-y-6">
                                     <ProfileDetails {...profileDetailsData} />
-                                    {/* Documents and Address components side by side */}
-                                    <div className="flex gap-6">
-                                        <div className="w-1/2">
+                                    
+                                    {/* Documents and Address - full width on mobile, side by side on desktop */}
+                                    <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+                                        <div className="w-full md:w-1/2">
                                             <Documents documents={documentsData} />
                                         </div>
-                                        <div className="w-1/2">
+                                        <div className="w-full md:w-1/2 mt-4 md:mt-0">
                                             <Address addresses={addressesData} />
                                         </div>
                                     </div>
-                                    {/* Bank Details and Work Details components side by side */}
-                                    <div className="flex gap-6">
-                                        <div className="w-1/2">
+                                    
+                                    {/* Bank Details and Work Details - full width on mobile, side by side on desktop */}
+                                    <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+                                        <div className="w-full md:w-1/2">
                                             <BankDetails bank={BankProps} />
                                         </div>
-                                        <div className="w-1/2">
+                                        <div className="w-full md:w-1/2 mt-4 md:mt-0">
                                             <WorkDetails work={workDetailsData} />
                                         </div>
                                     </div>
+                                    
                                     <PreviousSchoolDetails />
                                     <SocialMedia data={socialMediaData} />
                                     <OtherInfo />

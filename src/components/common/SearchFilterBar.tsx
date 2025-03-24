@@ -2,7 +2,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { IoSearchOutline } from "react-icons/io5";
 import { IoChevronDown, IoChevronUp, IoLogOutOutline } from "react-icons/io5";
-// Remove the direct import and use the image as a prop or public path
 import { useDispatch, useSelector } from 'react-redux';
 import { handleLogout } from '@/utils/logoutFunc';
 import { RootState } from '@/redux/store';
@@ -14,6 +13,7 @@ import { useRouter } from 'next/navigation';
 
 const SearchFilterBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter()
   const dispatch = useDispatch();
@@ -32,6 +32,10 @@ const SearchFilterBar = () => {
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const toggleMobileSearch = () => {
+    setIsMobileSearchOpen(!isMobileSearchOpen);
   };
 
   // Close dropdown when clicking outside
@@ -55,7 +59,9 @@ const SearchFilterBar = () => {
   return (
     <div className="flex justify-between items-center mb-6">
       <SidebarTrigger />
-      <div className="relative w-full md:w-2/5">
+      
+      {/* Desktop search bar */}
+      <div className="relative hidden md:block w-full md:w-2/5 ml-8">
         <input
           type="text"
           placeholder="Search"
@@ -63,17 +69,45 @@ const SearchFilterBar = () => {
         />
         <IoSearchOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
       </div>
-      <div className="flex items-center space-x-4">
-        <div className="border border-gray-300 px-3 py-1 rounded-md flex items-center space-x-2">
-          <span className="text-sm text-gray-600">Academic Year :</span>
-          <span className="text-sm font-medium">2025 / 2026</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <div className="w-6 h-6 flex items-center justify-center border border-gray-300">
-            <div className="w-3 h-3 rounded-full bg-red-500"></div>
+      
+      {/* Mobile search toggle and bar */}
+      <div className="md:hidden flex items-center">
+        <button 
+          onClick={toggleMobileSearch}
+          className="p-2 rounded-md"
+        >
+          <IoSearchOutline className="text-gray-500" />
+        </button>
+      </div>
+      
+      {/* Mobile search bar (collapsible) */}
+      {isMobileSearchOpen && (
+        <div className="absolute left-0 right-0 top-16 px-4 z-20 md:hidden">
+          <div className="relative w-full">
+            <input
+              type="text"
+              placeholder="Search"
+              className="w-full px-4 py-2 pr-10 bg-white border rounded-lg focus:outline-none focus:border-gray-400"
+            />
+            <IoSearchOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
           </div>
-          <div className="w-6 h-6 flex items-center justify-center border border-gray-300">
-            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+        </div>
+      )}
+      
+      <div className="flex items-center space-x-4">
+        {/* Academic Year and colored indicators - visible only on desktop */}
+        <div className="hidden md:flex items-center space-x-4">
+          <div className="border border-gray-300 px-3 py-1 rounded-md flex items-center space-x-2">
+            <span className="text-sm text-gray-600">Academic Year :</span>
+            <span className="text-sm font-medium">2025 / 2026</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 flex items-center justify-center border border-gray-300">
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+            </div>
+            <div className="w-6 h-6 flex items-center justify-center border border-gray-300">
+              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+            </div>
           </div>
         </div>
 
@@ -83,7 +117,6 @@ const SearchFilterBar = () => {
             className="flex items-center space-x-3 cursor-pointer"
             onClick={toggleDropdown}
           >
-
             <div className="flex flex-col">
               <span className="text-sm font-medium"> {user?.data?.firstName} </span>
               <span className="text-xs text-gray-500">{user?.data?.role} </span>
@@ -104,12 +137,6 @@ const SearchFilterBar = () => {
                 <p className="text-xs text-gray-600 font-medium"> {user?.data?.email}</p>
               </div>
               <ul className="py-1">
-                {/* <li>
-                  <a href="#profile" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150">
-                    <IoPersonOutline className="mr-3 text-gray-500" />
-                    Your Profile
-                  </a>
-                </li> */}
                 <li className="border-t border-gray-100">
                   <button onClick={() => handleLogout(dispatch, isSessionExpired, router)} className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150">
                     <IoLogOutOutline className="mr-3" />

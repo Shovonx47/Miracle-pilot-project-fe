@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect,  useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChevronDown, Filter } from 'lucide-react';
 import { PaginationPage } from '@/components/Reusable/Pagination';
 import Image from 'next/image';
@@ -26,7 +26,6 @@ type TeacherType = {
   profileImage: string;
 };
 
-
 type PaginationDetails = {
   page: number;
   limit: number;
@@ -43,24 +42,22 @@ type TeacherDetailsProps = {
   setPage: (value: number) => void;  // Set page handler
   limit: number;  // Number of records per page
   setLimit: (value: number) => void;  // Set limit handler
-
 };
 
-
-
-const TeacherAttendanceTable = ({ allTeachers, filterBy,
+const TeacherAttendanceTable = ({ 
+  allTeachers, 
+  filterBy,
   setFilterBy,
   sortBy,
   setSortBy,
   page,
   setPage,
   limit,
-  setLimit }: TeacherDetailsProps) => {
+  setLimit 
+}: TeacherDetailsProps) => {
 
   const [attendance, { isLoading }] = useAddAttendanceMutation()
-
   const { control } = useForm();
-
 
   // Function to update Teacher attendance
   const teachers = allTeachers?.data?.data || [];
@@ -103,7 +100,6 @@ const TeacherAttendanceTable = ({ allTeachers, filterBy,
     );
   };
 
-
   const onSubmit = async () => {
     try {
       const response = await attendance(attendanceData).unwrap();
@@ -132,18 +128,19 @@ const TeacherAttendanceTable = ({ allTeachers, filterBy,
 
   return (
     <div className="bg-white shadow-sm border rounded">
-      <div className="flex justify-between items-center p-4 border-b">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border-b gap-4 sm:gap-0">
         <h1 className="text-xl font-semibold text-gray-800">Teacher Attendance List</h1>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="border border-gray-200 py-1 px-3 rounded">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+            <div className="border border-gray-200 py-1 px-3 rounded w-full sm:w-auto">
               <span className="text-sm text-gray-600">03/04/2025 - 03/10/2025</span>
             </div>
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <select
                 value={filterBy}
                 onChange={(e) => setFilterBy(e.target.value)}
-                className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 w-full"
               >
                 <option value="all">Filter</option>
                 <option value="Present">Present</option>
@@ -155,11 +152,11 @@ const TeacherAttendanceTable = ({ allTeachers, filterBy,
               <Filter className="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
             </div>
           </div>
-          <div className="relative">
+          <div className="relative w-full sm:w-auto">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 w-full"
             >
               <option value="teacherId">Sort by A-Z</option>
               <option value="-teacherId">Sort by Z-A</option>
@@ -169,9 +166,10 @@ const TeacherAttendanceTable = ({ allTeachers, filterBy,
         </div>
       </div>
 
+      {/* Controls */}
       <div>
-        <div className="flex items-center justify-between p-4 border-b">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border-b gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-600">Row Per Page</span>
               <select
@@ -189,37 +187,37 @@ const TeacherAttendanceTable = ({ allTeachers, filterBy,
           </div>
           <button
             onClick={onSubmit}
-            className="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
+            className="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700 transition-colors w-full sm:w-auto"
             disabled={isLoading}
           >
             {isLoading ? "Processing..." : "Submit"}
           </button>
         </div>
 
+        {/* Table with horizontal scroll */}
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="min-w-full">
             <thead>
-              <tr className="bg-gray-50 w-full">
+              <tr className="bg-gray-50">
                 <th className="p-4 text-center">
                   <input type="checkbox" className="rounded" />
                 </th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-600">
-                 Id
+                <th className="p-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap">
+                  Id
                 </th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-600">
-                Subject Name
+                <th className="p-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap">
+                  Subject Name
                 </th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-600">
+                <th className="p-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap">
                   Name
                 </th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-600">
-                Category
+                <th className="p-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap">
+                  Category
                 </th>
-                
-                <th className="p-4 text-left text-sm font-semibold text-gray-600">
+                <th className="p-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap">
                   Attendance
                 </th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-600">
+                <th className="p-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap">
                   Time
                 </th>
               </tr>
@@ -236,11 +234,11 @@ const TeacherAttendanceTable = ({ allTeachers, filterBy,
                       <td className="p-4 text-center">
                         <input type="checkbox" className="rounded" />
                       </td>
-                      <td className="p-4">
+                      <td className="p-4 whitespace-nowrap">
                         <span className="text-blue-600">{teacher.teacherId}</span>
                       </td>
-                      <td className="p-4">{teacher.subject}</td>
-                      <td className="p-4">
+                      <td className="p-4 whitespace-nowrap">{teacher.subject}</td>
+                      <td className="p-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="w-8 h-8 mr-3 rounded-full overflow-hidden">
                             <Image
@@ -254,9 +252,9 @@ const TeacherAttendanceTable = ({ allTeachers, filterBy,
                           {teacher.firstName}
                         </div>
                       </td>
-                      <td className="p-4">{teacher.category}</td>
+                      <td className="p-4 whitespace-nowrap">{teacher.category}</td>
                       
-                      <td className="p-4">
+                      <td className="p-4 whitespace-nowrap">
                         <div className="flex flex-col space-y-2">
                           <div className="flex items-center space-x-4">
                             {/* Present Button */}
@@ -293,52 +291,51 @@ const TeacherAttendanceTable = ({ allTeachers, filterBy,
                               <span className="text-xs text-gray-500">Absent</span>
                             </div>
                           </div>
-
-
                         </div>
                       </td>
-                      <td className="p-2 flex space-x-2">
-                        {/* In Time Input */}
-                        <Controller
-                          name={`attendance.${teacher.teacherId}.in_time`}
-                          control={control}
-                          render={({ field }) => (
-                            <div>
-                              <label className="text-sm text-gray-600">In Time</label>
-                              <Input
-                                type="time"
-                                {...field}
-                                value={attendanceData.find(entry => entry.user.providedId === teacher.teacherId)?.in_time || ""}
-                                onChange={(e) => updateAttendance(teacher.teacherId, "in_time", e.target.value)}
-                              />
-                            </div>
-                          )}
-                        />
+                      <td className="p-2 whitespace-nowrap">
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          {/* In Time Input */}
+                          <Controller
+                            name={`attendance.${teacher.teacherId}.in_time`}
+                            control={control}
+                            render={({ field }) => (
+                              <div>
+                                <label className="text-sm text-gray-600">In Time</label>
+                                <Input
+                                  type="time"
+                                  {...field}
+                                  className="w-full sm:w-24"
+                                  value={attendanceData.find(entry => entry.user.providedId === teacher.teacherId)?.in_time || ""}
+                                  onChange={(e) => updateAttendance(teacher.teacherId, "in_time", e.target.value)}
+                                />
+                              </div>
+                            )}
+                          />
 
-                        {/* Out Time Input */}
-                        <Controller
-                          name={`attendance.${teacher.teacherId}.out_time`}
-                          control={control}
-                          // rules={{ required: "Out Time is required" }}
-                          render={({ field }) => (
-                            <div>
-                              <label className="text-sm text-gray-600">Out Time</label>
-                              <Input
-                                type="time"
-                                {...field}
-                                value={attendanceData.find(entry => entry.user.providedId === teacher.teacherId)?.out_time || ""}
-                                onChange={(e) => updateAttendance(teacher.teacherId, "out_time", e.target.value)}
-                              />
-                            </div>
-                          )}
-                        />
+                          {/* Out Time Input */}
+                          <Controller
+                            name={`attendance.${teacher.teacherId}.out_time`}
+                            control={control}
+                            render={({ field }) => (
+                              <div>
+                                <label className="text-sm text-gray-600">Out Time</label>
+                                <Input
+                                  type="time"
+                                  {...field}
+                                  className="w-full sm:w-24"
+                                  value={attendanceData.find(entry => entry.user.providedId === teacher.teacherId)?.out_time || ""}
+                                  onChange={(e) => updateAttendance(teacher.teacherId, "out_time", e.target.value)}
+                                />
+                              </div>
+                            )}
+                          />
+                        </div>
                       </td>
-
                     </tr>
                   );
                 })}
               </tbody>
-
             )}
           </table>
           {teachers.length === 0 && (
@@ -347,11 +344,11 @@ const TeacherAttendanceTable = ({ allTeachers, filterBy,
         </div>
       </div>
 
-      <div className="flex justify-end p-4 border-t">
+      {/* Pagination */}
+      <div className="flex justify-center sm:justify-end p-4 border-t">
         <div className='flex items-center'>
           <PaginationPage totalPages={allTeachers?.data?.meta?.totalPage as number} page={page} setPage={setPage} />
         </div>
-
       </div>
     </div>
   );

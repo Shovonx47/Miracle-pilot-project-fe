@@ -7,34 +7,34 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
- import Link from 'next/link';
+import Link from 'next/link';
 import EmployeePaymentTable from '@/components/Staff/Payroll/EmployeePaymentTable';
 
 export default function AllStudentsPage() {
   return (
     <div className="p-2 md:p-2 lg:p-7">
 
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3 sm:gap-0">
         <div className="flex flex-col gap-1">
           <span className="font-bold text-headerText">Employee Payroll</span>
           <span className="text-dataText">Payroll / Employee Payroll</span>
         </div>
-        <div className="flex items-center space-x-4">
-          <div className="bg-white border border-gray-300 rounded-md p-4 w-9 h-9"></div>
+        <div className="mt-3 sm:mt-0">
           <Select>
-            <SelectTrigger className="w-[180px] bg-gray-200">
+            <SelectTrigger className="w-[150px] sm:w-[180px] bg-gray-200">
               <SelectValue placeholder="Export" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="pdf">Export as PDF</SelectItem>
               <SelectItem value="excel">Export as Excel</SelectItem>
-              <SelectItem value="csv">Export as CSV</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      <EmployeePaymentTable />
+      <div className="overflow-x-auto">
+        <EmployeePaymentTable />
+      </div>
     </div>
   );
 }

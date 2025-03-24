@@ -1,73 +1,56 @@
 "use client";
 import React, { useState } from 'react';
 import { ChevronDown, Filter } from 'lucide-react';
-import { useGetAllStudentsQuery } from '@/redux/api/Student/studentApi';
 import LoadingSpinner from '@/components/Loader';
 import { PaginationPage } from '@/components/Reusable/Pagination';
+import { useGetAllStaffsQuery } from '@/redux/api/Staff/staffApi';
 
-
-type Tickers = {
-  [key: string]: boolean;
-};
-
-const AllStudentsTable = () => {
-  const [tickers, setTickers] = useState<Tickers>({});
+const AllStaffTable = () => {
   const [filterBy, setFilterBy] = useState('Active');
-  const [sortBy, setSortBy] = useState('-createdAt');
+  const [sortBy, setSortBy] = useState('-joiningDate');
   const [searchData, setSearchData] = useState('');
 
-  const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(5)
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
 
-
-  const handleTickerClick = (studentIndex: number, tickerIndex: number) => {
-    setTickers(prev => ({
-      ...prev,
-      [`${studentIndex}-${tickerIndex}`]: !prev[`${studentIndex}-${tickerIndex}`]
-    }));
-  };
-
-
-  const { data: allStudents, isLoading } = useGetAllStudentsQuery({ page, limit, sort: sortBy, searchTerm: searchData, status: filterBy })
-
+  const { data: staffData, isLoading } = useGetAllStaffsQuery({ 
+    page, 
+    limit, 
+    sort: sortBy, 
+    searchTerm: searchData, 
+    status: filterBy 
+  });
 
   if (isLoading) {
-    return <LoadingSpinner />
+    return <LoadingSpinner />;
   }
 
   return (
-    <div className="bg-white shadow-lg">
-      <div className="flex justify-between items-center p-6">
-        <h1 className="text-xl font-semibold text-gray-800">Students List</h1>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="border border-gray-200 py-1 px-2">
-              <span className="text-sm text-gray-600">01/01/2025 - 31/01/2025</span>
-
-            </div>
-            <div className="relative">
-              <select
-                value={filterBy}
-                onChange={(e) => setFilterBy(e.target.value)}
-                className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">Fiters</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-                <option value="paid">Paid</option>
-                <option value="unpaid">Unpaid</option>
-              </select>
-              <Filter className="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
-            </div>
+    <div className="bg-white shadow-lg rounded-lg">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-4 sm:p-6 gap-4">
+        <h1 className="text-xl font-semibold text-gray-800">Staff List</h1>
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="relative">
+            <select
+              value={filterBy}
+              onChange={(e) => setFilterBy(e.target.value)}
+              className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
+            >
+              <option value="all">Filters</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+            <Filter className="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
           </div>
           <div className="relative">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
             >
-              <option value="-createdAt">Date Ascending</option>
-              <option value="createdAt">Date Descending</option>
+              <option value="-joiningDate">Date Ascending</option>
+              <option value="joiningDate">Date Descending</option>
             </select>
             <ChevronDown className="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
           </div>
@@ -75,13 +58,16 @@ const AllStudentsTable = () => {
       </div>
       <div className="border-b border-gray-200"></div>
 
-      {/* Rest of the component remains the same */}
-      <div className="flex items-center justify-between mb-4 p-6">
+      {/* Controls Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-6">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-600">Row Per Page</span>
-            <select onChange={(e) => setLimit(Number(e.target.value))} className="border rounded px-2 py-1 text-sm">
-
+            <select 
+              value={limit}
+              onChange={(e) => setLimit(Number(e.target.value))} 
+              className="border rounded px-2 py-1 text-sm"
+            >
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="15">15</option>
@@ -89,110 +75,90 @@ const AllStudentsTable = () => {
               <option value="25">25</option>
               <option value="50">50</option>
             </select>
-
           </div>
           <span className="text-sm text-gray-600">Entries</span>
         </div>
         <input
+          value={searchData}
           onChange={(e) => setSearchData(e.target.value)}
           type="search"
           placeholder="Search"
-          className="border rounded px-3 py-1 text-sm"
+          className="border rounded px-3 py-2 text-sm w-full sm:w-auto"
         />
       </div>
 
+      {/* Table Section - With horizontal scroll for mobile */}
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="bg-gray-100 w-full">
-              <th className="w-4 p-4 -mx-6">
+              <th className="w-4 p-2 sm:p-4">
                 <input type="checkbox" className="rounded" />
               </th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Admission No</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Roll No</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Name</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Class</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Section</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Gender</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Status</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Date of Join</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Date of Birth</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Action</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Staff ID</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Name</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Category</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Gender</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Status</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Joining Date</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Contract Type</th>
             </tr>
           </thead>
-          {
-            allStudents?.data?.data.length > 0 &&
-            <tbody className="text-sm font-medium text-[#515B73]">
-              {allStudents?.data?.data?.map((student: any, index: number) => (
-                <tr key={index} className="border-b">
-                  <td className="p-4">
+          {staffData?.data?.data?.length > 0 && (
+            <tbody className="text-xs sm:text-sm font-medium text-[#515B73]">
+              {staffData?.data?.data?.map((staff: any) => (
+                <tr key={staff._id} className="border-b">
+                  <td className="p-2 sm:p-4">
                     <input type="checkbox" className="rounded" />
                   </td>
-                  <td className="p-4">
-                    <span className="text-blue-600">{student.studentId}</span>
+                  <td className="p-2 sm:p-4">
+                    <span className="text-blue-600">{staff.staffId}</span>
                   </td>
-                  <td className="p-4">{student.studentId}</td>
-                  <td className="p-4">
+                  <td className="p-2 sm:p-4">
                     <div className="flex items-center gap-2">
                       <img
-                        src={student.profileImage}
-                        alt={`${student.firstName}'s profile`}
-                        className="w-8 h-8 rounded-full object-cover"
+                        src={staff.profileImage}
+                        alt={`${staff.firstName}'s profile`}
+                        className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover"
                       />
-                      <span>{student.firstName} {student.lastName}</span>
+                      <span>{staff.firstName} {staff.lastName}</span>
                     </div>
                   </td>
-                  <td className="p-4">{student.class}</td>
-                  <td className="p-4">{student.section}</td>
-                  <td className="p-4">{student.gender}</td>
-                  <td className="p-4">
-                    <span className={`px-2 py-1 rounded text-xs ${student.status === 'Active'
-                      ? 'bg-green-100 text-green-600'
-                      : 'bg-red-100 text-red-600'
-                      }`}>
-                      {student.status}
+                  <td className="p-2 sm:p-4">{staff.category}</td>
+                  <td className="p-2 sm:p-4">{staff.gender}</td>
+                  <td className="p-2 sm:p-4">
+                    <span className={`px-2 py-1 rounded text-xs ${
+                      staff.status === 'Active'
+                        ? 'bg-green-100 text-green-600'
+                        : 'bg-red-100 text-red-600'
+                    }`}>
+                      {staff.status}
                     </span>
                   </td>
-                  <td className="p-4">{student.admissionDate}</td>
-                  <td className="p-4">{student.dateOfBirth}</td>
-                  <td className="p-4">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        {[1, 2, 3].map((tickerIndex) => (
-                          <button
-                            key={tickerIndex}
-                            onClick={() => handleTickerClick(index, tickerIndex)}
-                            className={`w-8 h-8 rounded-full border-2 border-gray-200 cursor-pointer transition-colors ${tickers[`${index}-${tickerIndex}`]
-                              ? 'bg-blue-500 border-blue-500'
-                              : 'bg-white'
-                              }`}
-                          />
-                        ))}
-                      </div>
-                      <button className={`px-4 py-1 rounded text-white ${student.paid ? 'bg-green-500' : 'bg-red-500'
-                        }`}>
-                        {student.paid ? 'Paid' : 'Due'}
-                      </button>
-                    </div>
-                  </td>
+                  <td className="p-2 sm:p-4">{new Date(staff.joiningDate).toLocaleDateString()}</td>
+                  <td className="p-2 sm:p-4">{staff.contractType}</td>
                 </tr>
               ))}
             </tbody>
-          }
+          )}
         </table>
-        {
-          allStudents?.data?.data?.length === 0 &&
-          <div className='h-40 flex items-center justify-center w-full'> No data found. </div>
-        }
+        {!staffData?.data?.data?.length && (
+          <div className='h-40 flex items-center justify-center w-full'>No data found.</div>
+        )}
       </div>
 
-      <div className="flex justify-end p-6">
+      {/* Pagination Section */}
+      <div className="flex justify-center sm:justify-end p-4 sm:p-6">
         <div className="flex items-center gap-2">
-          <PaginationPage totalPages={allStudents?.data?.meta?.totalPage} page={page} setPage={setPage} />
+          <PaginationPage 
+            totalPages={staffData?.data?.meta?.totalPage} 
+            page={page} 
+            setPage={setPage} 
+          />
         </div>
       </div>
     </div>
   );
 };
 
-export default AllStudentsTable;
+export default AllStaffTable;

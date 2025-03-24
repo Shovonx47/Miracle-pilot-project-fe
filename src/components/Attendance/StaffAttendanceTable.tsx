@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect,  useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChevronDown, Filter } from 'lucide-react';
 import { PaginationPage } from '@/components/Reusable/Pagination';
 import Image from 'next/image';
@@ -9,8 +9,6 @@ import { Input } from '../ui/input';
 import { useAddAttendanceMutation } from '@/redux/api/Attendance/attendanceApi';
 import { toast } from 'sonner';
 
-
-
 type StaffType = {
   _id: string;
   staffId: string;
@@ -19,7 +17,6 @@ type StaffType = {
   category: string;
   profileImage: string;
 };
-
 
 type PaginationDetails = {
   page: number;
@@ -37,10 +34,7 @@ type StaffDetailsProps = {
   setPage: (value: number) => void;  // Set page handler
   limit: number;  // Number of records per page
   setLimit: (value: number) => void;  // Set limit handler
-
 };
-
-
 
 const StaffAttendanceTable = ({ allStaffs, filterBy,
   setFilterBy,
@@ -54,7 +48,6 @@ const StaffAttendanceTable = ({ allStaffs, filterBy,
   const [attendance, { isLoading }] = useAddAttendanceMutation()
 
   const { control } = useForm();
-
 
   // Function to update Teacher attendance
   const staffs = allStaffs?.data?.data || [];
@@ -97,7 +90,6 @@ const StaffAttendanceTable = ({ allStaffs, filterBy,
     );
   };
 
-
   const onSubmit = async () => {
     try {
       const response = await attendance(attendanceData).unwrap();
@@ -126,18 +118,20 @@ const StaffAttendanceTable = ({ allStaffs, filterBy,
 
   return (
     <div className="bg-white shadow-sm border rounded">
-      <div className="flex justify-between items-center p-4 border-b">
-        <h1 className="text-xl font-semibold text-gray-800">Staff Attendance List</h1>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="border border-gray-200 py-1 px-3 rounded">
+      {/* Header Section - Stacked on mobile, row on desktop */}
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center p-4 border-b">
+        <h1 className="text-xl font-semibold text-gray-800 mb-4 md:mb-0">Staff Attendance List</h1>
+        
+        <div className="flex flex-col space-y-3 md:flex-row md:items-center md:space-y-0 md:gap-4">
+          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:space-y-0 md:gap-2">
+            <div className="border border-gray-200 py-1 px-3 rounded w-full md:w-auto">
               <span className="text-sm text-gray-600">03/04/2025 - 03/10/2025</span>
             </div>
-            <div className="relative">
+            <div className="relative w-full md:w-auto">
               <select
                 value={filterBy}
                 onChange={(e) => setFilterBy(e.target.value)}
-                className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 w-full"
               >
                 <option value="all">Filter</option>
                 <option value="Present">Present</option>
@@ -149,11 +143,11 @@ const StaffAttendanceTable = ({ allStaffs, filterBy,
               <Filter className="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
             </div>
           </div>
-          <div className="relative">
+          <div className="relative w-full md:w-auto">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 w-full"
             >
               <option value="staffId">Sort by A-Z</option>
               <option value="-staffId">Sort by Z-A</option>
@@ -164,8 +158,9 @@ const StaffAttendanceTable = ({ allStaffs, filterBy,
       </div>
 
       <div>
-        <div className="flex items-center justify-between p-4 border-b">
-          <div className="flex items-center gap-4">
+        {/* Row Per Page & Submit Button - Stacked on mobile */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between p-4 border-b">
+          <div className="flex items-center gap-4 mb-3 md:mb-0">
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-600">Row Per Page</span>
               <select
@@ -183,41 +178,40 @@ const StaffAttendanceTable = ({ allStaffs, filterBy,
           </div>
           <button
             onClick={onSubmit}
-            className="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
+            className="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700 transition-colors w-full md:w-auto"
             disabled={isLoading}
           >
             {isLoading ? "Processing..." : "Submit"}
           </button>
         </div>
 
+        {/* Table with horizontal scroll for mobile */}
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-gray-50 w-full">
-                <th className="p-4 text-center">
+                <th className="p-2 md:p-4 text-center">
                   <input type="checkbox" className="rounded" />
                 </th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-600">
-                 Id
+                <th className="p-2 md:p-4 text-left text-xs md:text-sm font-semibold text-gray-600">
+                  Id
                 </th>
-                
-                <th className="p-4 text-left text-sm font-semibold text-gray-600">
+                <th className="p-2 md:p-4 text-left text-xs md:text-sm font-semibold text-gray-600">
                   Name
                 </th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-600">
-                Category
+                <th className="p-2 md:p-4 text-left text-xs md:text-sm font-semibold text-gray-600">
+                  Category
                 </th>
-                
-                <th className="p-4 text-left text-sm font-semibold text-gray-600">
+                <th className="p-2 md:p-4 text-left text-xs md:text-sm font-semibold text-gray-600">
                   Attendance
                 </th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-600">
+                <th className="p-2 md:p-4 text-left text-xs md:text-sm font-semibold text-gray-600">
                   Time
                 </th>
               </tr>
             </thead>
             {staffs?.length > 0 && (
-              <tbody className="text-sm font-medium text-gray-700">
+              <tbody className="text-xs md:text-sm font-medium text-gray-700">
                 {staffs.map((staff) => {
                   const attendanceEntry = attendanceData.find(
                     (entry) => entry.user.providedId === staff.staffId
@@ -225,16 +219,15 @@ const StaffAttendanceTable = ({ allStaffs, filterBy,
 
                   return (
                     <tr key={staff.staffId} className="border-t hover:bg-gray-50">
-                      <td className="p-4 text-center">
+                      <td className="p-2 md:p-4 text-center">
                         <input type="checkbox" className="rounded" />
                       </td>
-                      <td className="p-4">
+                      <td className="p-2 md:p-4">
                         <span className="text-blue-600">{staff.staffId}</span>
                       </td>
-                      
-                      <td className="p-4">
+                      <td className="p-2 md:p-4">
                         <div className="flex items-center">
-                          <div className="w-8 h-8 mr-3 rounded-full overflow-hidden">
+                          <div className="w-6 h-6 md:w-8 md:h-8 mr-2 md:mr-3 rounded-full overflow-hidden">
                             <Image
                               src={staff?.profileImage}
                               alt={`${staff.firstName} avatar`}
@@ -243,27 +236,28 @@ const StaffAttendanceTable = ({ allStaffs, filterBy,
                               className="w-full h-full object-cover"
                             />
                           </div>
-                          {staff.firstName}
+                          <span className="truncate max-w-[80px] md:max-w-full">{staff.firstName}</span>
                         </div>
                       </td>
-                      <td className="p-4">{staff.category}</td>
-                      
-                      <td className="p-4">
-                        <div className="flex flex-col space-y-2">
-                          <div className="flex items-center space-x-4">
+                      <td className="p-2 md:p-4">
+                        <span className="truncate max-w-[60px] md:max-w-full">{staff.category}</span>
+                      </td>
+                      <td className="p-2 md:p-4">
+                        <div className="flex flex-col space-y-1 md:space-y-2">
+                          <div className="flex items-center space-x-2 md:space-x-4">
                             {/* Present Button */}
                             <div className="flex items-center space-x-1">
                               <button
                                 onClick={() =>
                                   updateAttendance(staff.staffId, "present", !attendanceEntry?.present)
                                 }
-                                className={`w-5 h-5 rounded-full flex items-center justify-center cursor-pointer ${attendanceEntry?.present
+                                className={`w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center cursor-pointer ${attendanceEntry?.present
                                   ? "bg-blue-500 text-white"
                                   : "bg-white border border-gray-300 hover:bg-gray-100"
                                   }`}
                                 aria-label="Mark as Present"
                               >
-                                {attendanceEntry?.present && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                                {attendanceEntry?.present && <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full"></div>}
                               </button>
                               <span className="text-xs text-gray-500">Present</span>
                             </div>
@@ -274,63 +268,62 @@ const StaffAttendanceTable = ({ allStaffs, filterBy,
                                 onClick={() =>
                                   updateAttendance(staff.staffId, "absent", !attendanceEntry?.absent)
                                 }
-                                className={`w-5 h-5 rounded-full flex items-center justify-center cursor-pointer ${attendanceEntry?.absent
+                                className={`w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center cursor-pointer ${attendanceEntry?.absent
                                   ? "bg-blue-500 text-white"
                                   : "bg-white border border-gray-300 hover:bg-gray-100"
                                   }`}
                                 aria-label="Mark as Absent"
                               >
-                                {attendanceEntry?.absent && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                                {attendanceEntry?.absent && <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full"></div>}
                               </button>
                               <span className="text-xs text-gray-500">Absent</span>
                             </div>
                           </div>
-
-
                         </div>
                       </td>
-                      <td className="p-2 flex space-x-2">
-                        {/* In Time Input */}
-                        <Controller
-                          name={`attendance.${staff.staffId}.in_time`}
-                          control={control}
-                          render={({ field }) => (
-                            <div>
-                              <label className="text-sm text-gray-600">In Time</label>
-                              <Input
-                                type="time"
-                                {...field}
-                                value={attendanceData.find(entry => entry.user.providedId === staff.staffId)?.in_time || ""}
-                                onChange={(e) => updateAttendance(staff.staffId, "in_time", e.target.value)}
-                              />
-                            </div>
-                          )}
-                        />
+                      <td className="p-2 md:p-4">
+                        <div className="flex flex-col md:flex-row md:space-x-2 space-y-2 md:space-y-0">
+                          {/* In Time Input */}
+                          <Controller
+                            name={`attendance.${staff.staffId}.in_time`}
+                            control={control}
+                            render={({ field }) => (
+                              <div>
+                                <label className="text-xs md:text-sm text-gray-600">In Time</label>
+                                <Input
+                                  type="time"
+                                  {...field}
+                                  className="h-8 text-xs md:text-sm"
+                                  value={attendanceData.find(entry => entry.user.providedId === staff.staffId)?.in_time || ""}
+                                  onChange={(e) => updateAttendance(staff.staffId, "in_time", e.target.value)}
+                                />
+                              </div>
+                            )}
+                          />
 
-                        {/* Out Time Input */}
-                        <Controller
-                          name={`attendance.${staff.staffId}.out_time`}
-                          control={control}
-                          // rules={{ required: "Out Time is required" }}
-                          render={({ field }) => (
-                            <div>
-                              <label className="text-sm text-gray-600">Out Time</label>
-                              <Input
-                                type="time"
-                                {...field}
-                                value={attendanceData.find(entry => entry.user.providedId === staff.staffId)?.out_time || ""}
-                                onChange={(e) => updateAttendance(staff.staffId, "out_time", e.target.value)}
-                              />
-                            </div>
-                          )}
-                        />
+                          {/* Out Time Input */}
+                          <Controller
+                            name={`attendance.${staff.staffId}.out_time`}
+                            control={control}
+                            render={({ field }) => (
+                              <div>
+                                <label className="text-xs md:text-sm text-gray-600">Out Time</label>
+                                <Input
+                                  type="time"
+                                  {...field}
+                                  className="h-8 text-xs md:text-sm"
+                                  value={attendanceData.find(entry => entry.user.providedId === staff.staffId)?.out_time || ""}
+                                  onChange={(e) => updateAttendance(staff.staffId, "out_time", e.target.value)}
+                                />
+                              </div>
+                            )}
+                          />
+                        </div>
                       </td>
-
                     </tr>
                   );
                 })}
               </tbody>
-
             )}
           </table>
           {staffs.length === 0 && (
@@ -339,11 +332,10 @@ const StaffAttendanceTable = ({ allStaffs, filterBy,
         </div>
       </div>
 
-      <div className="flex justify-end p-4 border-t">
+      <div className="flex justify-center md:justify-end p-4 border-t">
         <div className='flex items-center'>
           <PaginationPage totalPages={allStaffs?.data?.meta?.totalPage as number} page={page} setPage={setPage} />
         </div>
-
       </div>
     </div>
   );

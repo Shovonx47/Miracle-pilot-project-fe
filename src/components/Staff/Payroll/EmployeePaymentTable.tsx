@@ -44,18 +44,19 @@ const EmployeePaymentTable = () => {
 
   return (
     <div className="bg-white shadow-lg">
-      <div className="flex justify-between items-center p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 sm:p-6 gap-4 sm:gap-0">
         <h1 className="text-xl font-semibold text-gray-800">Employee Payments</h1>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="border border-gray-200 py-1 px-2">
-              <span className="text-sm text-gray-600">01/02/2025 - 28/02/2025</span>
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            {/* Date range - hidden on mobile, visible on sm and up */}
+            <div className="hidden sm:block border border-gray-200 py-1 px-2 text-sm">
+              <span className="text-gray-600">01/02/2025 - 28/02/2025</span>
             </div>
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <select
                 value={filterBy}
                 onChange={(e) => setFilterBy(e.target.value)}
-                className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full sm:w-auto appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">Filters</option>
                 <option value="Paid">Paid</option>
@@ -64,11 +65,11 @@ const EmployeePaymentTable = () => {
               <Filter className="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
             </div>
           </div>
-          <div className="relative">
+          <div className="relative w-full sm:w-auto mt-2 sm:mt-0">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full sm:w-auto appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="name">Name Ascending</option>
               <option value="-name">Name Descending</option>
@@ -79,28 +80,26 @@ const EmployeePaymentTable = () => {
       </div>
       <div className="border-b border-gray-200"></div>
 
-      <div className="flex items-center justify-between mb-4 p-6">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Row Per Page</span>
-            <select 
-              onChange={(e) => setLimit(Number(e.target.value))} 
-              className="border rounded px-2 py-1 text-sm"
-              value={limit}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-            </select>
-          </div>
-          <span className="text-sm text-gray-600">Entries</span>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-6 gap-4 sm:gap-0">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <span className="text-xs sm:text-sm text-gray-600">Row Per Page</span>
+          <select 
+            onChange={(e) => setLimit(Number(e.target.value))} 
+            className="border rounded px-2 py-1 text-xs sm:text-sm"
+            value={limit}
+          >
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select>
+          <span className="text-xs sm:text-sm text-gray-600">Entries</span>
         </div>
         <input
           onChange={(e) => setSearchData(e.target.value)}
           type="search"
           placeholder="Search"
-          className="border rounded px-3 py-1 text-sm"
+          className="border rounded px-3 py-1 text-sm w-full sm:w-auto"
           value={searchData}
         />
       </div>
@@ -109,36 +108,36 @@ const EmployeePaymentTable = () => {
         <table className="w-full">
           <thead>
             <tr className="bg-gray-100 w-full">
-              <th className="w-4 p-4 -mx-6">
+              <th className="w-4 p-2 sm:p-4 -mx-6">
                 <input type="checkbox" className="rounded" />
               </th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">ID</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Name</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Department</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Designation</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Phone</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Amount</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Status</th>
-              <th className="p-4 text-left text-sm font-semibold text-gray-600">Action</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">ID</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Name</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Department</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Designation</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Phone</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Amount</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Status</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Action</th>
             </tr>
           </thead>
           {payments.length > 0 && (
-            <tbody className="text-sm font-medium text-[#515B73]">
+            <tbody className="text-xs sm:text-sm font-medium text-[#515B73]">
               {payments.map((payment: Payment, index: number) => (
                 <tr key={index} className="border-b">
-                  <td className="p-4">
+                  <td className="p-2 sm:p-4">
                     <input type="checkbox" className="rounded" />
                   </td>
-                  <td className="p-4">
+                  <td className="p-2 sm:p-4">
                     <span className="text-blue-600">{payment.id}</span>
                   </td>
-                  <td className="p-4">{payment.name}</td>
-                  <td className="p-4">{payment.department}</td>
-                  <td className="p-4">{payment.designation}</td>
-                  <td className="p-4">{payment.phone}</td>
-                  <td className="p-4">{payment.amount}</td>
-                  <td className="p-4">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
+                  <td className="p-2 sm:p-4">{payment.name}</td>
+                  <td className="p-2 sm:p-4">{payment.department}</td>
+                  <td className="p-2 sm:p-4">{payment.designation}</td>
+                  <td className="p-2 sm:p-4">{payment.phone}</td>
+                  <td className="p-2 sm:p-4">{payment.amount}</td>
+                  <td className="p-2 sm:p-4">
+                    <span className={`px-1 sm:px-2 py-1 rounded-full text-xs ${
                       payment.status === 'Paid' 
                         ? 'bg-green-100 text-green-800' 
                         : 'bg-yellow-100 text-yellow-800'
@@ -146,10 +145,10 @@ const EmployeePaymentTable = () => {
                       {payment.status}
                     </span>
                   </td>
-                  <td className="p-4">
+                  <td className="p-2 sm:p-4">
                     <button
                       onClick={() => handleViewPaySlip(payment.id)}
-                      className="bg-gray-200 text-[#515B73] py-1 px-3 rounded text-sm"
+                      className="bg-gray-200 text-[#515B73] py-1 px-2 sm:px-3 rounded text-xs sm:text-sm"
                     >
                       View Pay Slip
                     </button>
@@ -164,7 +163,7 @@ const EmployeePaymentTable = () => {
         )}
       </div>
 
-      <div className="flex justify-end p-6">
+      <div className="flex justify-center sm:justify-end p-4 sm:p-6">
         <div className="flex items-center gap-2">
           <PaginationPage totalPages={totalPages} page={page} setPage={setPage} />
         </div>
