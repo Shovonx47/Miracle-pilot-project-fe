@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, Filter } from 'lucide-react';
+import { ChevronDown, Filter, Menu } from 'lucide-react';
 import { PaginationPage } from '@/components/Reusable/Pagination';
 import { useGetAllClassRoutinesQuery } from '@/redux/api/Class-routine/classRoutineApi';
 
@@ -29,6 +29,7 @@ const ClassScheduleTable = () => {
   const [searchData, setSearchData] = useState('');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
+  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
   
   // Fetch class routine data using Redux RTK Query
   const { data: classRoutineData, isLoading, isError } = useGetAllClassRoutinesQuery({
@@ -52,19 +53,21 @@ const ClassScheduleTable = () => {
   );
 
   return (
-    <div className="bg-white shadow-lg">
-      <div className="flex justify-between items-center p-6">
+    <div className="bg-white shadow-lg w-full">
+      {/* Header Section - Made responsive for mobile */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 md:p-6 space-y-4 md:space-y-0">
         <h1 className="text-xl font-semibold text-gray-800">Class Routine</h1>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="border border-gray-200 py-1 px-2">
-              <span className="text-sm text-gray-600">01/01/2025 - 31/01/2025</span>
-            </div>
-            <div className="relative">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 w-full md:w-auto">
+          {/* Date range hidden on mobile, visible on md screens and up */}
+          <div className="hidden md:block border border-gray-200 py-1 px-2 text-sm text-gray-600">
+            <span>01/01/2025 - 31/01/2025</span>
+          </div>
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <div className="relative w-full md:w-auto">
               <select
                 value={filterBy}
                 onChange={(e) => setFilterBy(e.target.value)}
-                className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
               >
                 <option value="all">Filters</option>
                 <option value="active">Active</option>
@@ -72,55 +75,56 @@ const ClassScheduleTable = () => {
               </select>
               <Filter className="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
             </div>
-          </div>
-          <div className="relative">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="-startTime">Time Ascending</option>
-              <option value="startTime">Time Descending</option>
-            </select>
-            <ChevronDown className="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
+            <div className="relative w-full md:w-auto">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+              >
+                <option value="-startTime">Time Ascending</option>
+                <option value="startTime">Time Descending</option>
+              </select>
+              <ChevronDown className="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
+            </div>
           </div>
         </div>
       </div>
       <div className="border-b border-gray-200"></div>
 
-      <div className="flex items-center justify-between mb-4 p-6">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Row Per Page</span>
-            <select 
-              onChange={(e) => setLimit(Number(e.target.value))} 
-              className="border rounded px-2 py-1 text-sm"
-              value={limit}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-            </select>
-          </div>
+      {/* Controls Section - Made responsive for mobile */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 md:p-6 space-y-4 md:space-y-0">
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          <span className="text-sm text-gray-600">Row Per Page</span>
+          <select 
+            onChange={(e) => setLimit(Number(e.target.value))} 
+            className="border rounded px-2 py-1 text-sm"
+            value={limit}
+          >
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select>
           <span className="text-sm text-gray-600">Entries</span>
         </div>
         <input
           onChange={(e) => setSearchData(e.target.value)}
           type="search"
           placeholder="Search"
-          className="border rounded px-3 py-1 text-sm"
+          className="border rounded px-3 py-1 text-sm w-full md:w-auto"
           value={searchData}
         />
       </div>
 
+      {/* Loading and Error States */}
       {isLoading ? (
         <div className='h-40 flex items-center justify-center w-full'>Loading...</div>
       ) : isError ? (
         <div className='h-40 flex items-center justify-center w-full'>Error loading data. Please try again.</div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full">
+          {/* Using a single table for all screen sizes with horizontal scrolling */}
+          <table className="w-full min-w-max table-auto">
             <thead>
               <tr className="bg-gray-100 w-full">
                 <th className="w-4 p-4 -mx-6">
@@ -166,7 +170,8 @@ const ClassScheduleTable = () => {
         </div>
       )}
 
-      <div className="flex justify-end p-6">
+      {/* Pagination - Made responsive for mobile */}
+      <div className="flex justify-center md:justify-end p-4 md:p-6">
         <div className="flex items-center gap-2">
           <PaginationPage totalPages={totalPages} page={page} setPage={setPage} />
         </div>

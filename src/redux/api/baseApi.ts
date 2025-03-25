@@ -73,6 +73,7 @@ export const baseApi = createApi({
     "student",
     "teacher",
     "staff",
+    "admin",
     "account_officer",
     "class_routine",
     "exam_schedule",

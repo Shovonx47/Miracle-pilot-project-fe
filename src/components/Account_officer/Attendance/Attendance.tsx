@@ -46,7 +46,6 @@ export default function AllAccountantAttendance() {
                         <SelectContent>
                             <SelectItem value="pdf">Export as PDF</SelectItem>
                             <SelectItem value="excel">Export as Excel</SelectItem>
-                            <SelectItem value="csv">Export as CSV</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>

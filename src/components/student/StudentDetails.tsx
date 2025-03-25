@@ -105,17 +105,6 @@ export default function StudentDetails() {
 
     return (
         <div className="p-6 md:p-8 lg:p-10">
-            {/* Search Bar */}
-            <div className="mb-6">
-                <div className="relative w-full md:w-2/5">
-                    <input
-                        type="text"
-                        placeholder="Search"
-                        className="w-full max-w-full px-4 py-2 pr-10 bg-white border rounded-lg focus:outline-none focus:border-gray-400"
-                    />
-                    <IoSearchOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                </div>
-            </div>
 
             {/* Rest of the component remains the same */}
             <div className="flex flex-col lg:flex-row justify-between items-center mb-6">

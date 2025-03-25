@@ -38,60 +38,91 @@ export default function HrDashboard() {
   }
 
   return (
-    <div className="p-6 md:p-8 lg:p-10">
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex flex-col gap-1">
+    <div className="p-4 sm:p-6 md:p-8 lg:p-10">
+      {/* Header Section - Stack vertically on mobile */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-0">
+        <div className="flex flex-col gap-1 w-full sm:w-auto">
           <span className="font-bold text-headerText">Human Resource</span>
-          <span className="text-dataText">Dashboard / HR Admin</span>
+          <span className="text-dataText text-sm">Dashboard / HR Admin</span>
         </div>
-        <div className="flex items-center space-x-3">
-          <button className="px-3 py-1.5 text-sm bg-[#506EE4] text-white rounded-sm hover:bg-blue-700 transition-colors">
+        <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto justify-between sm:justify-end">
+          <button className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm bg-[#506EE4] text-white rounded-sm hover:bg-blue-700 transition-colors flex-1 sm:flex-none">
             Add New Student
           </button>
-          <button className="px-3 py-1.5 text-sm bg-[#E9EDF4] text-black rounded-sm hover:bg-green-700 transition-colors">
+          <button className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm bg-[#E9EDF4] text-black rounded-sm hover:bg-green-700 transition-colors flex-1 sm:flex-none">
             Fees Details
           </button>
         </div>
       </div>
-      <MorningNotification name={`${singleAdmin?.data?.firstName} ${singleAdmin?.data?.lastName}`} />
-      <DashboardMetrics />
-      {/* Update the grid layout structure */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        <div className="w-full">
+      
+      {/* Morning Notification - Full width on all screens */}
+      <div className="w-full mb-4">
+        <MorningNotification name={`${singleAdmin?.data?.firstName} ${singleAdmin?.data?.lastName}`} />
+      </div>
+      
+      {/* Dashboard Metrics - Full width on all screens */}
+      <div className="w-full mb-4">
+        <DashboardMetrics />
+      </div>
+      
+      {/* Primary Dashboard Components - Stack vertically on mobile */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        {/* Schedule - Full width on mobile */}
+        <div className="w-full mb-4 md:mb-0">
           <Schedule />
         </div>
-        <div className="w-full">
+        
+        {/* Dashboard Stats - Full width on mobile */}
+        <div className="w-full mb-4 md:mb-0">
           <DashboardStats />
         </div>
-        <div className="flex flex-col gap-6">
-          <QuickLinksDashboard />
-          <ClassRoutine />
-          <LeaveRequestsComponent />
+        
+        {/* Quick access section - Keep stacked vertically always */}
+        <div className="flex flex-col gap-4">
+          <div className="w-full">
+            <QuickLinksDashboard />
+          </div>
+          <div className="w-full">
+            <ClassRoutine />
+          </div>
+          <div className="w-full">
+            <LeaveRequestsComponent />
+          </div>
         </div>
       </div>
       
-      {/* New row for Financial metrics and Fees Collection Chart */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-6">
-        <div className="md:col-span-1">
+      {/* Financial Section - Stack vertically on mobile */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        {/* Financial metrics - Full width on mobile */}
+        <div className="w-full mb-4 md:mb-0">
           <FinancialMetricsCards />
         </div>
-        <div className="md:col-span-2">
+        
+        {/* Fees Collection Chart - Full width on mobile, span 2 columns on desktop */}
+        <div className="w-full md:col-span-2">
           <FeesCollectionChart />
         </div>
       </div>
-      <div className="w-full">
+      
+      {/* Nav Menu - Full width on all screens */}
+      <div className="w-full mb-4">
         <NavMenu />
       </div>
       
-      {/* New row for Notice Board, Student Activity, and Todo List */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-6">
-        <div className="h-full">
+      {/* Bottom Information Section - Stack vertically on mobile */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Notice Board - Full width on mobile */}
+        <div className="w-full mb-4 md:mb-0">
           <NoticeBoard />
         </div>
-        <div className="h-full">
+        
+        {/* Student Activity - Full width on mobile */}
+        <div className="w-full mb-4 md:mb-0">
           <StudentActivity timeFrame="Weekly" />
         </div>
-        <div className="h-full">
+        
+        {/* Todo List - Full width on mobile */}
+        <div className="w-full">
           <TodoList />
         </div>
       </div>
