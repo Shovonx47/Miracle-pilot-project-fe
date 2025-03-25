@@ -10,9 +10,14 @@ import miracleLogo from "@/assets/loginform/Miracle_logo.png";
 import { useSignupMutation } from "@/redux/api/Auth/signUpApi";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import DynamicSelect from "@/components/Reusable/DynamicSelect";
+
+
+const role = ["Student", "Teacher", "Staff", "Accountant", "Admin"]
+
 
 const SignUp = () => {
-    const { control, handleSubmit, watch, reset } = useForm();
+    const { control, handleSubmit, watch, reset, setValue, trigger } = useForm();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -34,11 +39,20 @@ const SignUp = () => {
 
 
     const onSubmit = async (data: any) => {
+        data.role = data.role.toLowerCase();
         try {
             const response = await signup(data).unwrap();
             if (response.success) {
                 toast.success(response.message);
-                router.push("/auth/login");
+                // Role-based redirection
+                const roleRoutes: Record<string, string> = {
+                    student: "/add-student",
+                    teacher: "/add-teacher",
+                    staff: "/add-staff",
+                    accountant: "/add-accountant",
+                };
+
+                router.push(roleRoutes[response?.data?.role] || "/auth/login");
                 reset()
             } else if (response.success === false && response.errorSources) {
                 const errorMessage = response.errorSources.map((err: any) => err.message).join(", ");
@@ -144,7 +158,28 @@ const SignUp = () => {
                         </div>
                     )}
                 />
-
+                {/* role Select */}
+                <Controller
+                    name="role"
+                    control={control}
+                    rules={{ required: "Role is required" }}
+                    render={({ field, fieldState: { error } }) => (
+                        <div>
+                            <DynamicSelect
+                                label="role"
+                                placeholder="Select role"
+                                options={role}
+                                value={field.value}
+                                onChange={(val) => {
+                                    setValue("role", val);
+                                    trigger("role");
+                                }}
+                                className="bg-transparent text-gray-900 placeholder-gray-800 focus:ring-2 focus:ring-gray-700 focus:outline-none border-black"
+                            />
+                            {error && <p className="text-red-500 text-sm">{error.message}</p>}
+                        </div>
+                    )}
+                />
                 {/* Password Input with Show/Hide Toggle */}
                 {/* New Password */}
                 <div className="mb-4">
