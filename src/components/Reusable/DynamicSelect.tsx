@@ -6,14 +6,15 @@ interface DynamicSelectProps {
   options: string[];  // Array of options
   value: string;
   onChange: (value: string) => void;
+  className?: string
 }
 
-const DynamicSelect: React.FC<DynamicSelectProps> = ({ label, placeholder, options, value, onChange }) => {
+const DynamicSelect: React.FC<DynamicSelectProps> = ({ label, placeholder, options, value, onChange,className }) => {
   return (
     <div>
-      <label className="text-sm text-gray-600">{label}</label>
+      <label className={`text-sm text-gray-600 ${className}`}>{label}</label>
       <Select onValueChange={onChange} value={value}>
-        <SelectTrigger className="w-full text-gray-600">
+        <SelectTrigger className={`w-full text-gray-600 ${className}`}>
           <SelectValue placeholder={placeholder}/>
         </SelectTrigger>
         <SelectContent>
