@@ -1,3 +1,4 @@
+'use client';
 import Image from 'next/image';
 import { useState } from 'react';
 import bkashLogo from '@/assets/payment/Bkash.webp';
@@ -304,4 +305,4 @@ export default function PaymentMethodSelection({ amount, onBack, onContinue }: P
       </button>
     </div>
   );
-} 
+}

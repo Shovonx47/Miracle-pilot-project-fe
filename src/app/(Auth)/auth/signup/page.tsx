@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import DynamicSelect from "@/components/Reusable/DynamicSelect";
 
 
-const role = ["Student", "Teacher", "Staff", "Accountant", "Admin"]
+const role = ["Student", "Teacher", "Staff", "Accountant"]
 
 
 const SignUp = () => {
@@ -42,8 +42,19 @@ const SignUp = () => {
         data.role = data.role.toLowerCase();
         try {
             const response = await signup(data).unwrap();
+            console.log("Signup response data:", JSON.stringify(response, null, 2));
+            
             if (response.success) {
                 toast.success(response.message);
+                
+                // Store the token in localStorage or Redux for subsequent API calls
+                if (response?.data?.token) {
+                    console.log("Storing token:", response.data.token.substring(0, 10) + "...");
+                    localStorage.setItem('auth_token', response.data.token);
+                } else {
+                    console.warn("No token received in response");
+                }
+                
                 // Role-based redirection
                 const roleRoutes: Record<string, string> = {
                     student: "/add-student",
@@ -52,13 +63,28 @@ const SignUp = () => {
                     accountant: "/add-accountant",
                 };
 
+                // Save user data for the next step (for both student and teacher roles)
+                if (response?.data?.role === 'student' || response?.data?.role === 'teacher') {
+                    // Pass user data to the add form page
+                    const userData = {
+                        firstName: data.firstName,
+                        lastName: data.lastName,
+                        email: data.email,
+                        role: data.role,
+                        userId: response?.data?.userId || ''
+                    };
+                    console.log("Storing user data:", userData);
+                    localStorage.setItem('user_data', JSON.stringify(userData));
+                }
+
                 router.push(roleRoutes[response?.data?.role] || "/auth/login");
-                reset()
+                reset();
             } else if (response.success === false && response.errorSources) {
                 const errorMessage = response.errorSources.map((err: any) => err.message).join(", ");
                 toast.error(errorMessage);
             }
         } catch (error: any) {
+            console.error("Signup error:", error);
             let errorMessage = "Network error, please try again!";
             if (error?.data?.errorSources) {
                 errorMessage = error.data.errorSources.map((err: any) => err.message).join(", ");

@@ -1,7 +1,17 @@
 import React from 'react';
+import { Student } from '@/types/student';
+import { useStudent } from './useStudent';
 
-const AttendanceCard = () => {
-  // Attendance data
+interface AttendanceSectionProps {
+  student?: Student | null;
+}
+
+const AttendanceCard = ({ student: propStudent }: AttendanceSectionProps) => {
+  // Use student from props or context
+  const contextStudent = useStudent();
+  const student = propStudent || contextStudent;
+
+  // Attendance data - would be calculated from actual attendance records
   const totalDays = 28;
   const present = 27;
   const absent = 1;

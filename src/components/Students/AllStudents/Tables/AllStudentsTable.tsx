@@ -3,17 +3,17 @@ import React, { useState } from 'react';
 import { ChevronDown, Filter } from 'lucide-react';
 import LoadingSpinner from '@/components/Loader';
 import { PaginationPage } from '@/components/Reusable/Pagination';
-import { useGetAllStaffsQuery } from '@/redux/api/Staff/staffApi';
+import { useGetAllStudentsQuery } from '@/redux/api/Student/studentApi';
 
-const AllStaffTable = () => {
+const AllStudentsTable = () => {
   const [filterBy, setFilterBy] = useState('Active');
-  const [sortBy, setSortBy] = useState('-joiningDate');
+  const [sortBy, setSortBy] = useState('-admissionDate');
   const [searchData, setSearchData] = useState('');
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
 
-  const { data: staffData, isLoading } = useGetAllStaffsQuery({ 
+  const { data: studentData, isLoading } = useGetAllStudentsQuery({ 
     page, 
     limit, 
     sort: sortBy, 
@@ -29,7 +29,7 @@ const AllStaffTable = () => {
     <div className="bg-white shadow-lg rounded-lg">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-4 sm:p-6 gap-4">
-        <h1 className="text-xl font-semibold text-gray-800">Staff List</h1>
+        <h1 className="text-xl font-semibold text-gray-800">Students List</h1>
         <div className="flex flex-wrap items-center gap-4">
           <div className="relative">
             <select
@@ -49,8 +49,8 @@ const AllStaffTable = () => {
               onChange={(e) => setSortBy(e.target.value)}
               className="appearance-none bg-white border rounded px-3 py-1 pr-8 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
             >
-              <option value="-joiningDate">Date Ascending</option>
-              <option value="joiningDate">Date Descending</option>
+              <option value="-admissionDate">Date Ascending</option>
+              <option value="admissionDate">Date Descending</option>
             </select>
             <ChevronDown className="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
           </div>
@@ -95,54 +95,52 @@ const AllStaffTable = () => {
               <th className="w-4 p-2 sm:p-4">
                 <input type="checkbox" className="rounded" />
               </th>
-              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Staff ID</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Student ID</th>
               <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Name</th>
-              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Category</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Class</th>
               <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Gender</th>
               <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Status</th>
-              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Joining Date</th>
-              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Contract Type</th>
+              <th className="p-2 sm:p-4 text-left text-xs sm:text-sm font-semibold text-gray-600">Admission Date</th>
             </tr>
           </thead>
-          {staffData?.data?.data?.length > 0 && (
+          {studentData?.data?.data?.length > 0 && (
             <tbody className="text-xs sm:text-sm font-medium text-[#515B73]">
-              {staffData?.data?.data?.map((staff: any) => (
-                <tr key={staff._id} className="border-b">
+              {studentData?.data?.data?.map((student: any) => (
+                <tr key={student._id} className="border-b">
                   <td className="p-2 sm:p-4">
                     <input type="checkbox" className="rounded" />
                   </td>
                   <td className="p-2 sm:p-4">
-                    <span className="text-blue-600">{staff.staffId}</span>
+                    <span className="text-blue-600">{student.studentId}</span>
                   </td>
                   <td className="p-2 sm:p-4">
                     <div className="flex items-center gap-2">
                       <img
-                        src={staff.profileImage}
-                        alt={`${staff.firstName}'s profile`}
+                        src={student.profileImage}
+                        alt={`${student.firstName}'s profile`}
                         className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover"
                       />
-                      <span>{staff.firstName} {staff.lastName}</span>
+                      <span>{student.firstName} {student.lastName}</span>
                     </div>
                   </td>
-                  <td className="p-2 sm:p-4">{staff.category}</td>
-                  <td className="p-2 sm:p-4">{staff.gender}</td>
+                  <td className="p-2 sm:p-4">Class {student.class} ({student.section})</td>
+                  <td className="p-2 sm:p-4">{student.gender}</td>
                   <td className="p-2 sm:p-4">
                     <span className={`px-2 py-1 rounded text-xs ${
-                      staff.status === 'Active'
+                      student.status === 'Active'
                         ? 'bg-green-100 text-green-600'
                         : 'bg-red-100 text-red-600'
                     }`}>
-                      {staff.status}
+                      {student.status}
                     </span>
                   </td>
-                  <td className="p-2 sm:p-4">{new Date(staff.joiningDate).toLocaleDateString()}</td>
-                  <td className="p-2 sm:p-4">{staff.contractType}</td>
+                  <td className="p-2 sm:p-4">{new Date(student.admissionDate).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>
           )}
         </table>
-        {!staffData?.data?.data?.length && (
+        {!studentData?.data?.data?.length && (
           <div className='h-40 flex items-center justify-center w-full'>No data found.</div>
         )}
       </div>
@@ -151,7 +149,7 @@ const AllStaffTable = () => {
       <div className="flex justify-center sm:justify-end p-4 sm:p-6">
         <div className="flex items-center gap-2">
           <PaginationPage 
-            totalPages={staffData?.data?.meta?.totalPage} 
+            totalPages={studentData?.data?.meta?.totalPage} 
             page={page} 
             setPage={setPage} 
           />
@@ -161,4 +159,4 @@ const AllStaffTable = () => {
   );
 };
 
-export default AllStaffTable;
+export default AllStudentsTable;

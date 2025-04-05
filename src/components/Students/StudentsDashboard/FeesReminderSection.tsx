@@ -1,6 +1,15 @@
 import React from 'react';
+import { Student } from '@/types/student';
+import { useStudent } from './useStudent';
 
-const FeesReminderSection = () => {
+interface FeesReminderSectionProps {
+  student?: Student | null;
+}
+
+const FeesReminderSection = ({ student: propStudent }: FeesReminderSectionProps) => {
+  // Use student from props or context
+  const contextStudent = useStudent();
+  const student = propStudent || contextStudent;
   const fees = [
     {
       type: "Mess Fees",

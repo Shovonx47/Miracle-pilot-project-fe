@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import PaymentMethodSelection from './PaymentMethodSelection';
 
@@ -77,4 +78,4 @@ export default function PaymentModal({ isOpen, onClose, onSubmit }: PaymentModal
       </div>
     </div>
   );
-} 
+}

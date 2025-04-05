@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { verifyToken } from '@/utils/verifyToken';
 import { TUser } from '@/redux/features/Auth/authSlice';
-import { useGetSingleAdminQuery } from '@/redux/api/Admin/adminApi';
+import { useGetSingleUserQuery } from '@/redux/api/Auth/getUserApi';
 import LoadingSpinner from '@/components/Loader';
 
 import { IoSearchOutline } from "react-icons/io5";
@@ -31,7 +31,7 @@ export default function HrDashboard() {
     email = userId?.email ?? "";
   }
 
-  const { data: singleAdmin, isLoading } = useGetSingleAdminQuery(email);
+  const { data: singleAdmin, isLoading } = useGetSingleUserQuery(email);
 
   if (isLoading) {
     return <LoadingSpinner />;

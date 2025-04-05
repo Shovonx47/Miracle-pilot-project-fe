@@ -9,6 +9,7 @@ const studentApi = baseApi.injectEndpoints({
                 url: "/students",
                 method: "POST",
                 body: info,
+                credentials: "include",
             }),
             invalidatesTags: ["student"],
         }),

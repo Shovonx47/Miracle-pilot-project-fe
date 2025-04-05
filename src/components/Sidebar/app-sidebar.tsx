@@ -18,48 +18,59 @@ import { navigationData } from "@/utils/navigationData";
 import { verifyToken } from "@/utils/verifyToken";
 import { TUser } from "@/redux/features/Auth/authSlice";
 
-
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  // Get the user's role from Redux
-
+  const [mounted, setMounted] = React.useState(false);
+  const [userRole, setUserRole] = React.useState<Role>("teacher");
   const userToken = useSelector((state: RootState) => state?.auth?.token);
 
-  // Check if userToken is not null
-  let userRole
+  React.useEffect(() => {
+    setMounted(true);
+    if (userToken) {
+      try {
+        const user = verifyToken(userToken) as TUser;
+        setUserRole((user?.role as Role) || "teacher");
+      } catch (error) {
+        console.error("Error verifying token:", error);
+        setUserRole("teacher");
+      }
+    }
+  }, [userToken]);
 
-  if (userToken) {
-    const user = verifyToken(userToken) as TUser;
-    userRole = user?.role;
-    console.log("Current user role:", userRole);
-  } else {
-    userRole = "";
-  }
+  // Updated filterItems function to handle role-specific visibility
+  const filterItems = React.useCallback((items: any[], sectionTitle: string) => {
+    if (userRole === "super_admin") return items;
 
+    return items.filter((item) => {
+      // Handle student-specific visibility
+      if (userRole === "student") {
+        // Only show items specifically marked for students
+        return item.showForRoles?.includes("student");
+      }
 
-  // Ensure userRole is valid and a proper Role type
-  const role: Role = (userRole as Role) ?? "teacher"; // Default to 'teacher' if role is undefined
+      // For other roles, hide items marked as hidden for them
+      if (item.hideForRoles?.includes(userRole)) {
+        return false;
+      }
 
-  // Function to filter items inside each section
-  const filterItems = (items: any[], sectionTitle: string) => {
-    // If user is super_admin, return all items
-    if (role === "super_admin") return items;
-
-    return items.filter((item) =>
-      itemPermissions[role]?.[sectionTitle]?.includes(item.permission)
-    );
-  };
+      // Check permissions as before
+      return itemPermissions[userRole]?.[sectionTitle]?.includes(item.permission);
+    });
+  }, [userRole]);
 
   // Filter sections and their respective items
-  const filteredNavItems = navigationData.navMain
-    .filter((section) => roleBasedAccess[role]?.includes(section.title))
-    .map((section) => ({
-      ...section,
-      items: filterItems(section.items, section.title),
-    }))
-    .filter((section) => section.items.length > 0); // Remove empty sections
+  const filteredNavItems = React.useMemo(() => {
+    return navigationData.navMain
+      .filter((section) => roleBasedAccess[userRole]?.includes(section.title))
+      .map((section) => ({
+        ...section,
+        items: filterItems(section.items, section.title),
+      }))
+      .filter((section) => section.items.length > 0);
+  }, [userRole, filterItems]);
 
-  console.log("Filtered nav items:", filteredNavItems);
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <Sidebar collapsible="icon" side="left" variant="inset" {...props}>

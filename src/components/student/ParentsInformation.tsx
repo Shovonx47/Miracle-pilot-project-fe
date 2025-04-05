@@ -58,16 +58,15 @@ export default function ParentsInformation({ parents }: ParentsProps) {
   ];
 
   return (
-    <div className="space-y-4 bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+    <div className="space-y-4">
       <div>
-        <h3 className="text-lg font-semibold mb-3 text-headerText">Parents Information</h3>
-        <hr className="border-gray-200 -mx-6 mb-3" />
+        <hr className="border-gray-200 -mx-6 mb-4" />
       </div>
       <div className="space-y-4">
         {parentList.map((parent, index) => (
           <div
             key={index}
-            className="flex items-center gap-8 p-4 border rounded-lg flex-col sm:flex-row"
+            className="flex items-center gap-4 p-3 border border-gray-100 rounded-lg flex-col sm:flex-row"
           >
             <div className="flex items-center gap-4 flex-1">
               <Image
@@ -78,17 +77,17 @@ export default function ParentsInformation({ parents }: ParentsProps) {
                 className="rounded-full"
               />
               <div>
-                <p className="font-semibold text-headerText">{parent.name}</p>
-                <p className="text-sm text-blue-600">{parent.relation}</p>
+                <p className="font-semibold text-gray-800">{parent.name}</p>
+                <p className="text-sm text-[#3D5EE1]">{parent.relation}</p>
               </div>
             </div>
             <div className="flex-1">
-              <p className="text-md text-headerText mb-1 font-semibold">Phone</p>
-              <p className="text-dataText">{parent.phone}</p>
+              <p className="text-sm text-gray-700 mb-1 font-medium">Phone</p>
+              <p className="text-sm text-gray-600">{parent.phone}</p>
             </div>
             <div className="flex-1">
-              <p className="text-md text-headerText mb-1 font-semibold">Email</p>
-              <p className="text-dataText">{parent.email}</p>
+              <p className="text-sm text-gray-700 mb-1 font-medium">Email</p>
+              <p className="text-sm text-gray-600">{parent.email}</p>
             </div>
           </div>
         ))}

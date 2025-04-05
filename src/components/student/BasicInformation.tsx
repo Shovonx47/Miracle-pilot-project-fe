@@ -1,3 +1,4 @@
+'use client';
 import Image from 'next/image';
 import { useState } from 'react';
 import PaymentModal from '../modals/PaymentModal';
@@ -46,37 +47,38 @@ export default function BasicInformation({ student }: StudentProps) {
   
   return (
     <>
-      <div className="bg-white rounded-lg p-6 shadow-md">
+      <div className="p-6">
         {/* Header with Image and Name */}
         <div className="flex items-center gap-4 mb-6">
-          <Image
-            src={student?.profileImage}
-            alt={student?.firstName}
-            width={64}
-            height={64}
-            className="rounded-full"
-          />
+          <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-100">
+            <Image
+              src={student?.profileImage}
+              alt={student?.firstName}
+              fill
+              className="object-cover"
+            />
+          </div>
           <div>
-            <h2 className="text-lg font-semibold text-headerText">{student?.firstName} {student?.lastName}</h2>
-            <div className="flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-gray-800">{student?.firstName} {student?.lastName}</h2>
+            <div className="flex items-center gap-2 mt-1">
               <span className="text-sm text-[#3D5EE1]">{student?.studentId}</span>
-              <span className="px-2 py-0.5 text-xs bg-green-100 text-green-600 rounded">{student?.status}</span>
+              <span className="px-2 py-0.5 text-xs bg-green-100 text-green-600 rounded-full">{student?.status}</span>
             </div>
           </div>
         </div>
         
         {/* Divider */}
-        <div className="h-px bg-gray-200 -mx-6 mb-3"></div>
+        <div className="h-px bg-gray-200 -mx-6 mb-4"></div>
         
         {/* Basic Information Title */}
-        <h3 className="font-bold text-headerText mb-4">Basic Information</h3>
+        <h3 className="font-bold text-gray-800 mb-4">Basic Information</h3>
         
         {/* Information Grid */}
-        <div className="space-y-4 mb-6">
+        <div className="space-y-3 mb-6">
           {Object.entries(studentInfo).map(([key, value]) => (
-            <div key={key} className="flex flex-col sm:flex-row">
-              <div className="w-full sm:w-1/2 text-headerText font-semibold">{key}</div>
-              <div className="w-full sm:w-1/2 text-dataText">{value}</div>
+            <div key={key} className="flex flex-row">
+              <div className="w-1/3 text-gray-700 font-medium">{key}</div>
+              <div className="w-2/3 text-gray-600">{value}</div>
             </div>
           ))}
         </div>

@@ -25,20 +25,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <Providers>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+    <html lang="en" className="h-full">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen overflow-y-auto overflow-x-hidden`}>
+        <Providers>
           <main className="w-full flex flex-col min-h-screen relative">
-            <div>{children}</div>
+            {children}
             {/* <div className="lg:-ml-[16rem]"> */}
               {/* <Footer /> */}
             {/* </div> */}
             <Toaster position="top-right" richColors duration={2000} />
           </main>
-        </body>
-      </Providers>
+        </Providers>
+      </body>
     </html>
   );
 }

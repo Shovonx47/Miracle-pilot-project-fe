@@ -12,13 +12,17 @@ export const itemPermissions: Record<Role, { [key: string]: string[] }> = {
   staff: {
     Staff: ["add", "view"], // Staff can add and view, but NOT edit
   },
-  teacher: {},
+  teacher: {
+    Students: ["view"],
+    Teacher: ["view"],
+    "Class Routine": ["view", "add", "edit"],
+    "Exam Schedule": ["view", "add", "edit"]
+  },
   accountant: {
     "Accounts": ["view"],
   },
   student: {
-    Students: ["add", "edit", "view"], "Exam Schedule": ["add", "edit"], "Class Routine": ["add", "edit"],
-    "Off Day": ["add", "edit"]
+    Students: ["view"] // Students can only view their own information
   },
   super_admin: {
     Staff: ["add", "edit", "view"],
@@ -27,7 +31,7 @@ export const itemPermissions: Record<Role, { [key: string]: string[] }> = {
     "Exam Schedule": ["add", "edit"],
     "Human Resource": ["view"],
     Accountant: ["add", "edit", "view"],
-    "Create Class Routine": ["add", "edit"],
+    "Class Routine": ["add", "edit"],
     "Off Day": ["add", "edit"],
     Payroll: ["add", "edit"],
     Admin: ["add", "edit"],

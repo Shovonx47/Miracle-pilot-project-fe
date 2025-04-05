@@ -6,9 +6,10 @@ import { useState } from "react";
 interface PersonalInfoProps {
     control: any;
     setValue: (name: string, value: any) => void;
+    trigger?: (name?: string) => void;
 }
 
-const Documents = ({ control, setValue }: PersonalInfoProps) => {
+const Documents = ({ control, setValue, trigger }: PersonalInfoProps) => {
 
     // Local states to store the file URL for rendering PDFs
     const [birthCertificateUrl, setBirthCertificateUrl] = useState<string | null>(null);
@@ -20,12 +21,14 @@ const Documents = ({ control, setValue }: PersonalInfoProps) => {
     };
 
     // Handle file change for both certificates
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, setFileUrl: React.Dispatch<React.SetStateAction<string | null>>) => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: string, setFileUrl: React.Dispatch<React.SetStateAction<string | null>>) => {
         const file = e.target.files?.[0] || null;
         if (file) {
             // Create a URL for the uploaded file
             const fileUrl = URL.createObjectURL(file);
             setFileUrl(fileUrl); // Update the state with the file URL
+            setValue(fieldName, file);
+            if (trigger) trigger(fieldName);
         }
     };
 
@@ -41,7 +44,7 @@ const Documents = ({ control, setValue }: PersonalInfoProps) => {
                     {/* Birth Certificate Upload */}
                     <div>
                         <h3 className="font-semibold">Upload Birth Certificate</h3>
-                        <p className="text-sm text-gray-500">Upload file size of 4MB, Accepted Format: PDF</p>
+                        <p className="text-sm text-gray-500">Upload file size of 4MB, Accepted formats: PDF, JPG, PNG</p>
                         <Controller
                             name="birthCertificate"
                             control={control}
@@ -54,34 +57,58 @@ const Documents = ({ control, setValue }: PersonalInfoProps) => {
                                         type="file"
                                         id="birth-certificate"
                                         className="hidden"
-                                        accept=".pdf"
+                                        accept=".pdf,.jpg,.jpeg,.png"
                                         onChange={(e) => {
-                                            field.onChange(e.target.files?.[0]);
-                                            setValue("birthCertificate", e.target.files?.[0]);
-                                            handleFileChange(e, setBirthCertificateUrl); // Update URL for preview
+                                            handleFileChange(e, "birthCertificate", setBirthCertificateUrl);
                                         }}
                                     />
-                                    {field.value && <span className="text-gray-700">{truncateFileName(field.value.name)}</span>}
+                                    {field.value && (
+                                        <>
+                                            <span className="text-gray-700">
+                                                {field.value.name ? truncateFileName(field.value.name) : "File uploaded"}
+                                            </span>
+                                            <button 
+                                                type="button"
+                                                className="text-red-500 ml-2"
+                                                onClick={() => {
+                                                    setValue("birthCertificate", null);
+                                                    setBirthCertificateUrl(null);
+                                                    if (trigger) trigger("birthCertificate");
+                                                }}
+                                            >
+                                                Remove
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             )}
                         />
-                        {/* Display the PDF preview */}
+                        {/* Display the PDF/Image preview */}
                         {birthCertificateUrl && (
-                            <iframe
-                                src={birthCertificateUrl}
-                                width="100%"
-                                height="200"
-                                frameBorder="0"
-                                title="Birth Certificate PDF"
-                                 className="mt-5"
-                            />
+                            <div className="mt-5 border rounded-md p-2">
+                                {birthCertificateUrl.endsWith('.pdf') ? (
+                                    <iframe
+                                        src={birthCertificateUrl}
+                                        width="100%"
+                                        height="200"
+                                        frameBorder="0"
+                                        title="Birth Certificate PDF"
+                                    />
+                                ) : (
+                                    <img 
+                                        src={birthCertificateUrl} 
+                                        alt="Birth Certificate" 
+                                        style={{ maxHeight: '200px', maxWidth: '100%' }}
+                                    />
+                                )}
+                            </div>
                         )}
                     </div>
 
                     {/* Transfer Certificate Upload */}
                     <div>
                         <h3 className="font-semibold">Upload Transfer Certificate</h3>
-                        <p className="text-sm text-gray-500">Upload file size of 4MB, Accepted Format: PDF</p>
+                        <p className="text-sm text-gray-500">Upload file size of 4MB, Accepted formats: PDF, JPG, PNG</p>
                         <Controller
                             name="transferCertificate"
                             control={control}
@@ -94,27 +121,51 @@ const Documents = ({ control, setValue }: PersonalInfoProps) => {
                                         type="file"
                                         id="transfer-certificate"
                                         className="hidden"
-                                        accept=".pdf"
+                                        accept=".pdf,.jpg,.jpeg,.png"
                                         onChange={(e) => {
-                                            field.onChange(e.target.files?.[0]);
-                                            setValue("transferCertificate", e.target.files?.[0]);
-                                            handleFileChange(e, setTransferCertificateUrl); // Update URL for preview
+                                            handleFileChange(e, "transferCertificate", setTransferCertificateUrl);
                                         }}
                                     />
-                                    {field.value && <span className="text-gray-700">{truncateFileName(field.value.name)}</span>}
+                                    {field.value && (
+                                        <>
+                                            <span className="text-gray-700">
+                                                {field.value.name ? truncateFileName(field.value.name) : "File uploaded"}
+                                            </span>
+                                            <button 
+                                                type="button"
+                                                className="text-red-500 ml-2"
+                                                onClick={() => {
+                                                    setValue("transferCertificate", null);
+                                                    setTransferCertificateUrl(null);
+                                                    if (trigger) trigger("transferCertificate");
+                                                }}
+                                            >
+                                                Remove
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             )}
                         />
-                        {/* Display the PDF preview */}
+                        {/* Display the PDF/Image preview */}
                         {transferCertificateUrl && (
-                            <iframe
-                                src={transferCertificateUrl}
-                                width="100%"
-                                height="200"
-                                frameBorder="0"
-                                title="Transfer Certificate PDF"
-                                className="mt-5"
-                            />
+                            <div className="mt-5 border rounded-md p-2">
+                                {transferCertificateUrl.endsWith('.pdf') ? (
+                                    <iframe
+                                        src={transferCertificateUrl}
+                                        width="100%"
+                                        height="200"
+                                        frameBorder="0"
+                                        title="Transfer Certificate PDF"
+                                    />
+                                ) : (
+                                    <img 
+                                        src={transferCertificateUrl} 
+                                        alt="Transfer Certificate" 
+                                        style={{ maxHeight: '200px', maxWidth: '100%' }}
+                                    />
+                                )}
+                            </div>
                         )}
                     </div>
                 </div>

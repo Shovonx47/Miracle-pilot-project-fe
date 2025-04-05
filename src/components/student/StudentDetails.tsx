@@ -1,165 +1,223 @@
-"use client"
-import BasicInformation from '@/components/student/BasicInformation';
-import ParentsInformation from '@/components/student/ParentsInformation';
-import Documents from '@/components/student/Documents';
-import PrimaryContact from '@/components/student/PrimaryContact';
-import Address from '@/components/student/Address';
-import PreviousSchool from '@/components/student/PreviousSchool';
-import BankDetails from '@/components/student/BankDetails';
-import MedicalHistory from '@/components/student/MedicalHistory';
-import SiblingInformation from '@/components/student/SiblingInformation';
-import HostelTransportInfo from '@/components/student/HostelTransportInfo';
-import OtherInfo from '@/components/student/OtherInfo';
-import { IoSearchOutline } from "react-icons/io5";
-import Avatar from '@/assets/avatars/3d_avatar_3.png';
-import Link from 'next/link';
-import { useGetSingleStudentQuery } from '@/redux/api/Student/studentApi';
+'use client';
+
+import React from 'react';
+import { Suspense } from 'react';
+import BasicInformation from './BasicInformation';
+import Address from './Address';
+import BankDetails from './BankDetails';
+import ParentsInformation from './ParentsInformation';
+import PrimaryContact from './PrimaryContact';
+import HostelTransportInfo from './HostelTransportInfo';
+import Documents from './Documents';
+import OtherInfo from './OtherInfo';
+import MedicalHistory from './MedicalHistory';
+import SiblingInformation from './SiblingInformation';
+import PreviousSchool from './PreviousSchool';
+import { Card } from '../ui/card';
+import { useGetCurrentStudentQuery } from '@/redux/api/Student/currentStudentApi';
+import { Student } from '@/types/student';
 import LoadingSpinner from '@/components/Loader';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
-import { verifyToken } from '@/utils/verifyToken';
-import { TUser } from '@/redux/features/Auth/authSlice';
 
+// Helper function to map API data to component props
+const mapStudentDataToComponentProps = (student: Student) => {
+  return {
+    studentId: student.studentId,
+    firstName: student.firstName,
+    lastName: student.lastName,
+    gender: student.gender,
+    dateOfBirth: student.dateOfBirth,
+    bloodGroup: student.bloodGroup,
+    religion: student.religion,
+    class: student.class,
+    motherTongue: student.motherTongue,
+    status: student.status,
+    profileImage: student.profileImage,
+    
+    // Address component data
+    addresses: {
+      current: student.presentAddress,
+      permanent: student.permanentAddress
+    },
 
-interface SiblingsDetailsProps {
-    siblingName: string;
-    class: string;
-    section: string;
-    gender: string;
-    roll: string;
-    motherTongue: string;
-}
+    // Bank details component data - This is a placeholder as the API doesn't provide bank details
+    bank: {
+      name: "N/A",
+      branch: "N/A",
+      ifsc: "N/A"
+    },
 
+    // Parents information component data
+    parents: {
+      fatherName: student.fatherName,
+      fatherEmail: student.fatherEmail,
+      fatherContactNumber: student.fatherContactNumber,
+      fatherOccupation: student.fatherOccupation,
+      fatherNidNumber: student.fatherNidNumber,
+
+      motherName: student.motherName,
+      motherEmail: student.motherEmail,
+      motherContactNumber: student.motherContactNumber,
+      motherOccupation: student.motherOccupation,
+      motherNidNumber: student.motherNidNumber,
+
+      localGuardianName: student.localGuardianName,
+      relationshipWithLocalGuardian: student.relationshipWithLocalGuardian,
+      localGuardianEmail: student.localGuardianEmail,
+      localGuardianContactNumber: student.localGuardianContactNumber,
+      localGuardianOccupation: student.localGuardianOccupation,
+      localGuardianNidNumber: student.localGuardianNidNumber
+    },
+
+    // Primary contact component data
+    contact: {
+      phone: student.contactNumber,
+      email: student.email
+    },
+
+    // Medical history component data - This is a placeholder as the API doesn't provide medical history
+    medical: {
+      allergies: "N/A",
+      medications: "N/A"
+    },
+
+    // Sibling information component data
+    siblings: student.siblings.length > 0 ? student.siblings : [],
+
+    // Previous school component data - This is a placeholder as the API doesn't provide previous school details
+    school: {
+      name: "N/A",
+      address: "N/A"
+    },
+
+    // Documents component data
+    documents: [
+      student.birthCertificate ? { name: student.birthCertificate } : null,
+      student.transferCertificate ? { name: student.transferCertificate } : null
+    ].filter(Boolean)
+  };
+};
 
 export default function StudentDetails() {
-    const userToken = useSelector((state: RootState) => state?.auth?.token);
+  // Fetch the current student's data from the API
+  const { data: studentApiResponse, isLoading, error } = useGetCurrentStudentQuery();
 
-    // Get user role if token exists
-    let email = "";
-    if (userToken) {
-        const userId = (verifyToken(userToken) as TUser);
-        email = userId?.email ?? ""; // Fallback to empty string if no id found
-    }
+  // Handle loading state
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
-    // // Only make the query if `id` is valid
-
-
-
-    const { data: singleStudent, isLoading } = useGetSingleStudentQuery( email );
-
-
-
-
-
-
-    const studentData = singleStudent?.data
-
-    const documentsData = [
-        { name: studentData?.birthCertificate },
-        { name: studentData?.transferCertificate || "No Transfer Certificate Provided" }, // Use fallback if not available
-    ];
-    
-
-    const tabs = [
-        'Student Details',
-        'Leave & Attendance',
-        'Fees',
-        'Exam & Results',
-        'Library'
-    ];
-
-    const contactData = {
-        phone: studentData?.contactNumber,
-        email: studentData?.email
-    };
-
-    const addressesData = {
-        current: studentData?.presentAddress,
-        permanent: studentData?.permanentAddress
-    };
-
-    const schoolData = {
-        name: studentData?.previousSchoolName,
-        address: studentData?.previousSchoolAddress
-    };
-
-    const bankData = {
-        name: "City Bank",
-        branch: "Jashore",
-        ifsc: "CB15012015"
-    };
-
-    const medicalData = {
-        allergies: "None",
-        medications: "-"
-    };
-
-
-
-
-
-
-    if (isLoading) {
-        return <LoadingSpinner />
-    }
-
+  // Handle error state
+  if (error) {
     return (
-        <div className="p-6 md:p-8 lg:p-10">
-
-            {/* Rest of the component remains the same */}
-            <div className="flex flex-col lg:flex-row justify-between items-center mb-6">
-                <div className="flex flex-col gap-1">
-                    <span className="font-bold text-headerText">Student Details</span>
-                    <span className="text-dataText">Dashboard / Student</span>
-                </div>
-                <div className="flex gap-3">
-                    <button className="px-4 py-2 bg-[#E9EDF4] text-gray-700 rounded">Login Details</button>
-                    <Link href="/student/edit-student">
-                        <button className="px-4 py-2 bg-[#48CB45] text-white rounded">Edit Student</button>
-                    </Link>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-[300px,1fr] gap-6">
-                <div className="space-y-6">
-                    <BasicInformation student={{ ...studentData, avatar: Avatar.src }} />
-                    <SiblingInformation siblings={singleStudent?.data?.siblings.map((sibling: SiblingsDetailsProps) => ({ ...sibling, avatar: Avatar.src }))} />
-                    <HostelTransportInfo />
-                </div>
-
-                <div className="space-y-6">
-                    <div className="mb-6">
-                        <div className="flex space-x-6 border-b">
-                            {tabs.map((tab) => (
-                                <button
-                                    key={tab}
-                                    className={`pb-4 text-sm font-medium ${tab === 'Student Details'
-                                        ? 'text-blue-600 border-b-2 border-blue-600'
-                                        : 'text-dataText hover:text-headerText'
-                                        }`}
-                                >
-                                    {tab}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                    <ParentsInformation parents={{ ...studentData, avatar: Avatar.src }} />
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 shadow-sm">
-
-                        <Documents documents={documentsData} />
-                        <PrimaryContact contact={contactData} />
-                        <Address addresses={addressesData} />
-                    </div>
-
-                    <PreviousSchool school={schoolData} />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <BankDetails bank={bankData} />
-                        <MedicalHistory medical={medicalData} />
-                    </div>
-                    <OtherInfo />
-                </div>
-            </div>
+      <div className="container mx-auto px-4 py-6 bg-gray-50 min-h-screen">
+        <div className="text-center py-10 bg-white rounded-lg shadow-md text-red-500">
+          Error loading student details. Please try again later.
         </div>
+      </div>
     );
+  }
+
+  // Check if we have student data
+  if (!studentApiResponse?.data?.data?.[0]) {
+    return (
+      <div className="container mx-auto px-4 py-6 bg-gray-50 min-h-screen">
+        <div className="text-center py-10 bg-white rounded-lg shadow-md">
+          No student data found. Please contact support.
+        </div>
+      </div>
+    );
+  }
+
+  // Map the API response to the component props
+  const student = mapStudentDataToComponentProps(studentApiResponse.data.data[0]);
+
+  return (
+    <div className="container mx-auto px-4 py-6 bg-gray-50 min-h-screen">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Student Profile</h1>
+      
+      <Suspense fallback={<div className="text-center py-10 bg-white rounded-lg shadow-md">Loading student details...</div>}>
+        <div className="space-y-6">
+          {/* Three column grid for other components */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left column - Basic Information and related components */}
+            <div className="lg:col-span-1 space-y-6">
+              <Card className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 bg-white">
+                <BasicInformation student={student} />
+              </Card>
+              
+              <Card className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 bg-white">
+                <div className="p-6">
+                  <SiblingInformation siblings={student.siblings} />
+                </div>
+              </Card>
+              
+              <Card className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 bg-white">
+                <div className="p-6">
+                  <HostelTransportInfo />
+                </div>
+              </Card>
+            </div>
+            
+            {/* Middle column - Other components */}
+            <div className="lg:col-span-1 space-y-6">              
+              <div className="grid grid-cols-1 gap-6">
+                <Card className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 bg-white">
+                  <div className="p-6">
+                    <Documents documents={student.documents as { name: string }[]} />
+                  </div>
+                </Card>
+                
+                <Card className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 bg-white">
+                  <div className="p-6">
+                    <PreviousSchool school={student.school} />
+                  </div>
+                </Card>
+              </div>
+              
+              <Card className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 bg-white">
+                <div className="p-6">
+                  <BankDetails bank={student.bank} />
+                </div>
+              </Card>
+            </div>
+            
+            {/* Right column - Address and other components */}
+            <div className="lg:col-span-1 space-y-6">
+              <Card className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 bg-white">
+                <div className="p-6">
+                  <Address addresses={student.addresses} />
+                </div>
+              </Card>
+              
+              <Card className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 bg-white">
+                <div className="p-6">
+                  <PrimaryContact contact={student.contact} />
+                </div>
+              </Card>
+              
+              <Card className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 bg-white">
+                <div className="p-6">
+                  <MedicalHistory medical={student.medical} />
+                </div>
+              </Card>
+            </div>
+          </div>
+          
+          {/* Parents Information - Full width row */}
+          <Card className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 bg-white">
+            <div className="p-6">
+              <ParentsInformation parents={student.parents} />
+            </div>
+          </Card>
+          
+          {/* Other Info - Full width row at the bottom of the page */}
+          <Card className="overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 bg-white">
+            <div className="p-6">
+              <OtherInfo />
+            </div>
+          </Card>
+        </div>
+      </Suspense>
+    </div>
+  );
 }

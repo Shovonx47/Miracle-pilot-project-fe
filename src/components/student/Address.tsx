@@ -9,9 +9,9 @@ interface AddressProps {
 
 export default function Address({ addresses }: AddressProps) {
   return (
-    <div className="p-4 border rounded-lg h-full bg-white">
-      <h3 className="text-lg font-semibold mb-3 text-headerText">Address</h3>
-      <hr className="border-gray-200 -mx-4 mb-3" />
+    <div>
+      <h3 className="text-lg font-semibold mb-3 text-gray-800">Address</h3>
+      <hr className="border-gray-200 -mx-6 mb-4" />
       <div className="space-y-6">
         <div className="flex items-start space-x-3">
           <div className="w-8 h-8 bg-gray-50 rounded-sm flex-shrink-0 mt-1" />

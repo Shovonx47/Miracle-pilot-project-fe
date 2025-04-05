@@ -15,15 +15,22 @@ const baseQuery = fetchBaseQuery({
   baseUrl: `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1`,
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).auth.token;
+    // Try to get token from Redux store first
+    let token = (getState() as RootState).auth.token;
+    
+    // If not in Redux, try localStorage (for handling direct navigation to add-student)
+    if (!token && typeof window !== 'undefined') {
+      token = localStorage.getItem('auth_token') || '';
+    }
 
     if (token) {
-      headers.set("authorization", `${token}`);
+      headers.set("authorization", `Bearer ${token}`);
+      console.log("Setting authorization header:", `Bearer ${token.substring(0, 10)}...`);
     }
-    // Remove these CORS headers - they should be set by the server
-    // headers.set('Access-Control-Allow-Credentials', 'true');
-    // headers.set('Access-Control-Allow-Origin', process.env.NEXT_PUBLIC_BASE_API_URL || '');
-
+    
+    // Ensure content type is set
+    headers.set('Content-Type', 'application/json');
+    
     return headers;
   },
 });
@@ -35,8 +42,10 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 > = async (args, api, extraOptions): Promise<any> => {
   let result = await baseQuery(args, api, extraOptions);
 
+  // If we get an unauthorized error, try to refresh the token
   if (result?.error?.status === 401) {
     try {
+      console.log('Attempting to refresh token');
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/v1/auth/refresh-token`,
         {
@@ -48,17 +57,20 @@ const baseQueryWithRefreshToken: BaseQueryFn<
       const data = await res.json();
 
       if (data?.data?.token) {
+        console.log('Token refreshed successfully');
         api.dispatch(
           setUser({
             token: data.data.token,
           })
         );
-        // Retry the original request
+        // Retry the original request with the new token
         result = await baseQuery(args, api, extraOptions);
       } else {
+        console.log('Token refresh failed');
         await handleLogout(api.dispatch, true);
       }
     } catch (error) {
+      console.error('Token refresh error:', error);
       await handleLogout(api.dispatch, true);
     }
   }
@@ -81,6 +93,7 @@ export const baseApi = createApi({
     "salary",
     "attendance",
     "forgot_password",
+    "pendingRequest",
   ],
   endpoints: () => ({}),
 });

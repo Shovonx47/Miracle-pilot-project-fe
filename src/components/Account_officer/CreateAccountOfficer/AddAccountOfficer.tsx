@@ -11,10 +11,10 @@ import uploadFile from "@/Helper/uploadFile";
 import { toast } from "sonner";
 import PayrollInformation from "./_components/Payroll";
 import BankAccountDetail from "./_components/BankAccountDetail";
-import { useCreateAccountOfficerMutation } from "@/redux/api/Account-officer/accountOfficerApi";
+import { useCreatePendingRequestMutation } from "@/redux/api/PendingRequest/pendingRequestApi";
+import { RequestType } from "@/types/pendingRequest";
+import { useRouter } from "next/navigation";
 import Experiences from "./_components/Experiences";
-
-
 
 const formSections = [
     PersonalInfo,
@@ -29,26 +29,39 @@ const formSections = [
 ];
 
 const AddAccountantForm = () => {
-    const { control, handleSubmit, setValue, watch, trigger, reset,getValues } = useForm({});
-    const [createAccountOfficer, { isLoading }] = useCreateAccountOfficerMutation()
+    const { control, handleSubmit, setValue, watch, trigger, reset, getValues } = useForm({});
+    const [createPendingRequest, { isLoading }] = useCreatePendingRequestMutation();
+    const router = useRouter();
 
     const onSubmit = async (data: any) => {
-
-        // Upload files and update data
-        const profileImage = await uploadFile(data.profileImage);
-        const resume = await uploadFile(data.resume);
-        const joiningLetter = await uploadFile(data.joiningLetter);
-
-        data.profileImage = profileImage?.secure_url;
-        data.resume = resume?.secure_url;
-        data.joiningLetter = joiningLetter?.secure_url;
-
         try {
-            const response = await createAccountOfficer(data).unwrap();
+            // Upload files and update data
+            const profileImage = await uploadFile(data.profileImage);
+            const resume = await uploadFile(data.resume);
+            const joiningLetter = await uploadFile(data.joiningLetter);
+
+            data.profileImage = profileImage?.secure_url;
+            data.resume = resume?.secure_url;
+            data.joiningLetter = joiningLetter?.secure_url;
+
+            // Create a pending request instead of directly creating an account officer
+            const pendingRequestPayload = {
+                requestType: RequestType.ACCOUNTANT,
+                requestData: data,
+                createdBy: data.userId || 'unknown'
+            };
+
+            const response = await createPendingRequest(pendingRequestPayload).unwrap();
      
             if (response.success) {
-                toast.success(response.message);
-                // reset()
+                toast.success("Your request has been submitted for approval!");
+                reset();
+                
+                // Clear the localStorage data
+                localStorage.removeItem('user_data');
+                
+                // Navigate to home page after successful submission
+                router.push("/");
             } else if (response.success === false && response.errorSources) {
                 // Extract error messages from errorSources array
                 const errorMessage = response.errorSources.map((err: any) => err.message).join(", ");
@@ -68,11 +81,6 @@ const AddAccountantForm = () => {
         }
     };
 
-
-
-
-
-
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             {formSections.map((Component, index) => (
@@ -83,7 +91,6 @@ const AddAccountantForm = () => {
                 <Button disabled={isLoading} variant="default" type="submit"> {isLoading ? " Submitting" : "Submit"} </Button>
             </div>
         </form>
-
     );
 }
 
