@@ -31,7 +31,12 @@ const Login = () => {
             const response = await login(data).unwrap();
             // const user = verifyToken(response.data) as TUser;
             if (response.success) {
-                dispatch(setUser({ token: response.data }));
+                // Store token in both Redux and localStorage
+                const token = response.data;
+                dispatch(setUser({ token }));
+                localStorage.setItem('auth_token', token);
+                // The token will be automatically included in future API requests
+                // via the prepareHeaders function in baseApi.ts
                 toast.success(response.message);
                 router.push("/");
                 reset()

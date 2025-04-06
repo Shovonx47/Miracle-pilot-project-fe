@@ -8,7 +8,7 @@ const AuthRoutes = ["/auth/login", "/auth/register", "/auth/add-details"];
 // Define role-based protected routes
 const roleBasedPrivateRoutes = {
     user: ["/", "/profile", "/dashboard"],
-    student: ["/", "/admin", "/student/add-student", "/student/all-students"],
+    student: ["/", "/admin", "/student/add-student", "/student/all-students", "/student/edit-student"],
     teacher: ["/", "/admin", "/student/add-student", "/student/all-students"],
     staff: ["/", "/admin", "/student/add-student", "/student/all-students"],
     admin: ["/", "/admin", "/student/add-student", "/student/all-students"],

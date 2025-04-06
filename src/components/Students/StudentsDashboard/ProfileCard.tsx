@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import avatar from "@/assets/avatars/3d_avatar_3.png";
 import { Student } from "@/types/student";
 import { useStudent } from './useStudent';
@@ -9,9 +10,14 @@ interface ProfileCardProps {
 }
 
 const ProfileCard = ({ student: propStudent }: ProfileCardProps) => {
-  // Use student from props or context
   const contextStudent = useStudent();
   const student = propStudent || contextStudent;
+
+  const router = useRouter(); // ← Initialize router
+
+  const handleEditClick = () => {
+    router.push("/student/edit-student"); // ← Navigate to the edit page
+  };
 
   return (
     <div className="bg-[#1A1C46] text-white p-6 rounded-lg w-full max-w-md">
@@ -19,13 +25,13 @@ const ProfileCard = ({ student: propStudent }: ProfileCardProps) => {
         {/* Top section with avatar and basic info */}
         <div className="flex items-center gap-4">
           <div className="relative">
-          <Image
-            src={student?.profileImage || avatar}
-            alt="Student"
-            width={60}
-            height={60}
-            className="rounded-full"
-          />
+            <Image
+              src={student?.profileImage || avatar}
+              alt="Student"
+              width={60}
+              height={60}
+              className="rounded-full"
+            />
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
           </div>
           <div>
@@ -44,7 +50,10 @@ const ProfileCard = ({ student: propStudent }: ProfileCardProps) => {
               {student?.status || "Unknown"}
             </span>
           </div>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition-colors">
+          <button
+            onClick={handleEditClick}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition-colors"
+          >
             Edit Profile
           </button>
         </div>

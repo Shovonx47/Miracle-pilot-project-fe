@@ -60,7 +60,7 @@ const Exams = ({ control, singleExamSchedule }: ExamsInfoProps) => {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
                                 {/* Course Name */}
                                 <div>
-                                    <label className="text-sm text-gray-600">Course Name</label>
+                                    <label className="text-sm text-gray-600">Subject Name</label>
                                     <Controller
                                         name={`exams.${index}.courseName`}
                                         control={control}
@@ -77,7 +77,7 @@ const Exams = ({ control, singleExamSchedule }: ExamsInfoProps) => {
 
                                 {/* Course Code */}
                                 <div>
-                                    <label className="text-sm text-gray-600">Course Code</label>
+                                    <label className="text-sm text-gray-600">Subject Code</label>
                                     <Controller
                                         name={`exams.${index}.courseCode`}
                                         control={control}

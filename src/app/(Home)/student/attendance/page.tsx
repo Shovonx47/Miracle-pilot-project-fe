@@ -1,11 +1,9 @@
-import AllStudentAttendance from '@/components/Students/Attendance/Attendance';
+import TeacherAttendanceManagement from '@/components/Teacher/Attendance/TeacherAttendanceManagement';
 import React from 'react';
 
 const page = () => {
   return (
-    <>
-     <AllStudentAttendance/> 
-    </>
+    <TeacherAttendanceManagement />
   );
 };
 

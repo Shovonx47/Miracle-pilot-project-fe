@@ -4,8 +4,10 @@ import { ChevronDown, Filter } from 'lucide-react';
 import LoadingSpinner from '@/components/Loader';
 import { PaginationPage } from '@/components/Reusable/Pagination';
 import { useGetAllStudentsQuery } from '@/redux/api/Student/studentApi';
+import { useRouter } from 'next/navigation';
 
 const AllStudentsTable = () => {
+  const router = useRouter();
   const [filterBy, setFilterBy] = useState('Active');
   const [sortBy, setSortBy] = useState('-admissionDate');
   const [searchData, setSearchData] = useState('');
@@ -20,6 +22,10 @@ const AllStudentsTable = () => {
     searchTerm: searchData, 
     status: filterBy 
   });
+  
+  const handleStudentClick = (studentId: string) => {
+    router.push(`/student/student-details?id=${studentId}`);
+  };
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -120,7 +126,12 @@ const AllStudentsTable = () => {
                         alt={`${student.firstName}'s profile`}
                         className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover"
                       />
-                      <span>{student.firstName} {student.lastName}</span>
+                      <span 
+                        onClick={() => handleStudentClick(student._id)}
+                        className="cursor-pointer hover:text-blue-600 hover:underline transition-colors"
+                      >
+                        {student.firstName} {student.lastName}
+                      </span>
                     </div>
                   </td>
                   <td className="p-2 sm:p-4">Class {student.class} ({student.section})</td>

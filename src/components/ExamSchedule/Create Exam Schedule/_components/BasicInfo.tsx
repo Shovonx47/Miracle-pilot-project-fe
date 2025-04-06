@@ -5,10 +5,11 @@ import DynamicSelect from "@/components/Reusable/DynamicSelect";
 import { DatePickerForm } from "@/components/Reusable/DatePickerForm";
 import { Textarea } from "@/components/ui/textarea";
 
+// Updated class options with Roman numerals
+const classOptions = ["Class I", "Class II", "Class III", "Class IV", "Class V", 
+                      "Class VI", "Class VII", "Class VIII", "Class IX", "Class X"];
 
 const subject = ["A", "B", "C", "D", "E"];
-
-
 
 interface BasicInfoProps {
     control: any; // control from useForm
@@ -17,7 +18,7 @@ interface BasicInfoProps {
     getValues: any
 }
 
-const BasicInfo = ({ control, setValue, trigger,getValues }: BasicInfoProps) => {
+const BasicInfo = ({ control, setValue, trigger, getValues }: BasicInfoProps) => {
     return (
         <div className="p-6 bg-white">
             <h2 className="text-xl font-semibold text-gray-800 pb-2">
@@ -28,10 +29,8 @@ const BasicInfo = ({ control, setValue, trigger,getValues }: BasicInfoProps) => 
                     <InfoIcon className="h-5 w-5" /> Basic Information
                 </div>
 
-
                 <div className="m-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-
-                    {/* class Select */}
+                    {/* class Select - Updated with Roman numeral class options */}
                     <Controller
                         name="class"
                         control={control}
@@ -41,7 +40,7 @@ const BasicInfo = ({ control, setValue, trigger,getValues }: BasicInfoProps) => 
                                 <DynamicSelect
                                     label="Class"
                                     placeholder="Select Class"
-                                    options={subject}
+                                    options={classOptions}
                                     value={field.value}
                                     onChange={(val) => {
                                         setValue("class", val);
@@ -52,6 +51,7 @@ const BasicInfo = ({ control, setValue, trigger,getValues }: BasicInfoProps) => 
                             </div>
                         )}
                     />
+                    
                     {/* exam name */}
                     <Controller
                         name="examName"
@@ -85,81 +85,28 @@ const BasicInfo = ({ control, setValue, trigger,getValues }: BasicInfoProps) => 
                             </div>
                         )}
                     />
-                    {/* Start Date */}
+                    
+                    {/* Single Date Field */}
                     <Controller
-                        name={`startDate`}
+                        name="examDate"
                         control={control}
-                        rules={{
-                            required: "Start Date is required",
-                            validate: (value) => {
-                                const endDate = getValues(`endDate`);
-                                if (endDate && value > endDate) {
-                                    return "Start Date cannot be greater than End Date.";
-                                }
-                                return true;
-                            },
-                        }}
+                        rules={{ required: "Exam Date is required" }}
                         render={({ field, fieldState: { error } }) => (
                             <div>
                                 <DatePickerForm
                                     value={field.value}
                                     onChange={(formattedDate) => {
-                                        setValue(`startDate`, formattedDate);
-                                        trigger(`startDate`);
-                                        trigger(`endDate`); // Revalidate End Date
+                                        setValue("examDate", formattedDate);
+                                        trigger("examDate");
                                     }}
-                                    label="Start Date"
-                                />
-                                {error && <p className="text-red-500 text-sm">{error.message}</p>}
-                            </div>
-                        )}
-                    />
-
-                    {/* End Date */}
-                    <Controller
-                        name={`endDate`}
-                        control={control}
-                        rules={{
-                            required: "End Date is required",
-                            validate: (value) => {
-                                const startDate = getValues(`startDate`);
-                                if (startDate && value < startDate) {
-                                    return "End Date cannot be earlier than Start Date.";
-                                }
-                                return true;
-                            },
-                        }}
-                        render={({ field, fieldState: { error } }) => (
-                            <div>
-                                <DatePickerForm
-                                    value={field.value}
-                                    onChange={(formattedDate) => {
-                                        setValue(`endDate`, formattedDate);
-                                        trigger(`startDate`); // Revalidate Start Date
-                                        trigger(`endDate`);
-                                    }}
-                                    label="End Date"
-                                />
-                                {error && <p className="text-red-500 text-sm">{error.message}</p>}
-                            </div>
-                        )}
-                    />
-                    <Controller
-                        name="createdBy"
-                        control={control}
-                        rules={{ required: "CreatedBy is required" }}
-                        render={({ field, fieldState: { error } }) => (
-                            <div>
-                                <label className="text-sm text-gray-600">Created By</label>
-                                <Input
-                                    {...field}
-                                    placeholder="Enter your Name"
+                                    label="Exam Date"
                                 />
                                 {error && <p className="text-red-500 text-sm">{error.message}</p>}
                             </div>
                         )}
                     />
                 </div>
+                
                 <div className="m-4">
                     {/*description */}
                     <Controller
@@ -168,7 +115,7 @@ const BasicInfo = ({ control, setValue, trigger,getValues }: BasicInfoProps) => 
                         rules={{ required: "Description is required" }}
                         render={({ field, fieldState: { error } }) => (
                             <div>
-                                <label className="text-sm text-gray-600"> Description</label>
+                                <label className="text-sm text-gray-600">Description</label>
                                 <Textarea
                                     {...field}
                                     placeholder="Enter short description"
@@ -177,7 +124,6 @@ const BasicInfo = ({ control, setValue, trigger,getValues }: BasicInfoProps) => 
                             </div>
                         )}
                     />
-
                 </div>
             </div>
         </div>

@@ -32,17 +32,16 @@ const formSections = [
 ];
 
 const UpdateStudentForm = () => {
-    const id = "67cb18df53cc89c6e95d7307"
-
-
     const userToken = useSelector((state: RootState) => state?.auth?.token);
     
-        // Get user role if token exists
-        let email = "";
-        if (userToken) {
-            const userId = (verifyToken(userToken) as TUser);
-            email = userId?.email ?? ""; // Fallback to empty string if no id found
-        }
+    // Get user info if token exists
+    let email = "";
+    let userId = "";
+    if (userToken) {
+        const userInfo = (verifyToken(userToken) as TUser);
+        email = userInfo?.email ?? ""; // Fallback to empty string if no email found
+        userId = userInfo?.id ?? ""; // Get user ID for update operation
+    }
 
 
     const { control, handleSubmit, setValue, watch, trigger } = useForm({});
@@ -66,7 +65,7 @@ const UpdateStudentForm = () => {
         try {
 
             const values = {
-                id,
+                id: userId, // Use the user ID from the auth token
                 data
             }
 

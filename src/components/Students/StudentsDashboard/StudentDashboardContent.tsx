@@ -5,8 +5,6 @@ import ProfileCard from "@/components/Students/StudentsDashboard/ProfileCard";
 import TodaysClasses from "@/components/Students/StudentsDashboard/TodaysClasses";
 import StatusIndicators from "@/components/Students/StudentsDashboard/StatusIndicators";
 import AttendanceSection from "@/components/Students/StudentsDashboard/AttendanceSection";
-import LeaveStatusSection from "@/components/Students/StudentsDashboard/LeaveStatusSection";
-import ExamResultsSection from "@/components/Students/StudentsDashboard/ExamResultsSection";
 import ClassFacultiesSection from "@/components/Students/StudentsDashboard/ClassFacultiesSection";
 import NoticeBoardSection from "@/components/Students/StudentsDashboard/NoticeBoardSection";
 import ScheduleSection from "@/components/Students/StudentsDashboard/ScheduleSection";
@@ -74,14 +72,12 @@ const StudentDashboardContent: React.FC<StudentDashboardContentProps> = ({ initi
             <ProfileCard student={student} />
             <TodaysClasses />
             <StatusIndicators student={student} />
-            <LeaveStatusSection />
             <FeesReminderSection student={student} />
           </div>
           
           {/* Middle Column - Academic Performance */}
           <div className="col-span-12 md:col-span-4 space-y-6">
             <AttendanceSection student={student} />
-            <ExamResultsSection />
             <TodoList />
           </div>
           
@@ -92,13 +88,14 @@ const StudentDashboardContent: React.FC<StudentDashboardContentProps> = ({ initi
             <SyllabusSection />
           </div>
           
-          {/* Full Width Sections */}
+          {/* Notice Board Section - Now above Class Faculties */}
+          <div className="col-span-12 mt-6">
+            <NoticeBoardSection />
+          </div>
+          
+          {/* Class Faculties Section - Now at the bottom */}
           <div className="col-span-12 mt-6">
             <ClassFacultiesSection />
-          </div>
-                  
-          <div className="col-span-12 md:col-span-6 lg:col-span-6 mt-6">
-            <NoticeBoardSection />
           </div>
         </div>
       </div>

@@ -4,12 +4,20 @@ import { NotebookTabs } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import DynamicSelect from "@/components/Reusable/DynamicSelect";
 
+// Updated class options with Roman numerals
 const classOptions = [
-    "Class 1",
-    "Class 2",
-    "Class 3"];
+    "Class I",
+    "Class II",
+    "Class III",
+    "Class IV",
+    "Class V",
+    "Class VI",
+    "Class VII",
+    "Class VIII",
+    "Class IX",
+    "Class X"
+];
 const sectionOptions = ["A", "B", "C"];
-const subjectOptions = ["Math", "Science", "History"];
 const dayOptions = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'
     , 'Saturday', 'Sunday'];
 
@@ -17,7 +25,6 @@ const dayOptions = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'
 interface ClassRoutineProps {
     control: any;
     watch: any;
-
     setValue: (name: string, value: any) => void;
     trigger: (name?: string | string[]) => void;
     teacherNames: string[]
@@ -25,6 +32,23 @@ interface ClassRoutineProps {
 
 const CreateClassRoutine = ({ control, setValue, trigger, watch, teacherNames }: ClassRoutineProps) => {
     const hasRoutine = watch("hasRoutine", true);
+    const selectedDays = watch("days", []);
+
+    // Function to handle multiple day selection
+    const handleDaySelection = (day: string) => {
+        let updatedDays = [...selectedDays];
+        
+        if (updatedDays.includes(day)) {
+            // Remove day if already selected
+            updatedDays = updatedDays.filter(d => d !== day);
+        } else {
+            // Add day if not already selected
+            updatedDays.push(day);
+        }
+        
+        setValue("days", updatedDays);
+        trigger("days");
+    };
 
     return (
         <div className="p-6 bg-white">
@@ -61,22 +85,15 @@ const CreateClassRoutine = ({ control, setValue, trigger, watch, teacherNames }:
                                     </div>
                                 )}
                             />
+                            {/* Subject Name as text input instead of dropdown */}
                             <Controller
                                 name="subjectName"
                                 control={control}
                                 rules={{ required: "Subject Name is required" }}
                                 render={({ field, fieldState: { error } }) => (
                                     <div>
-                                        <DynamicSelect
-                                            label="Subject Name"
-                                            placeholder="Select Subject Name"
-                                            options={subjectOptions}
-                                            value={field.value}
-                                            onChange={(val) => {
-                                                setValue("subjectName", val);
-                                                trigger("subjectName");
-                                            }}
-                                        />
+                                        <label className="text-sm text-gray-600">Subject Name</label>
+                                        <Input type="text" {...field} placeholder="Enter Subject Name" />
                                         {error && <p className="text-red-500 text-sm">{error.message}</p>}
                                     </div>
                                 )}
@@ -137,25 +154,31 @@ const CreateClassRoutine = ({ control, setValue, trigger, watch, teacherNames }:
                                 )}
                             />
 
-
-
-                            {/* Day */}
+                            {/* Days - Custom multi-select implementation */}
                             <Controller
-                                name="day"
+                                name="days"
                                 control={control}
-                                rules={{ required: "Day is required" }}
-                                render={({ field, fieldState: { error } }) => (
+                                rules={{ required: "At least one day must be selected" }}
+                                render={({ fieldState: { error } }) => (
                                     <div>
-                                        <DynamicSelect
-                                            label="Day"
-                                            placeholder="Select Day"
-                                            options={dayOptions}
-                                            value={field.value}
-                                            onChange={(val) => {
-                                                setValue("day", val);
-                                                trigger("day");
-                                            }}
-                                        />
+                                        <label className="text-sm text-gray-600">Days</label>
+                                        <div className="mt-1 space-y-2">
+                                            <div className="flex flex-wrap gap-2">
+                                                {dayOptions.map((day) => (
+                                                    <div 
+                                                        key={day}
+                                                        onClick={() => handleDaySelection(day)}
+                                                        className={`cursor-pointer px-3 py-1 rounded-md text-sm ${
+                                                            selectedDays.includes(day) 
+                                                                ? 'bg-blue-500 text-white' 
+                                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                        }`}
+                                                    >
+                                                        {day}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
                                         {error && <p className="text-red-500 text-sm">{error.message}</p>}
                                     </div>
                                 )}
@@ -200,12 +223,10 @@ const CreateClassRoutine = ({ control, setValue, trigger, watch, teacherNames }:
                             <Controller
                                 name={`buildingName`}
                                 control={control}
-
                                 render={({ field }) => (
                                     <div>
                                         <label className="text-sm text-gray-600">Building Name (Optional) </label>
                                         <Input type="text" {...field} placeholder="Enter Building Name" />
-
                                     </div>
                                 )}
                             />
@@ -232,10 +253,7 @@ const CreateClassRoutine = ({ control, setValue, trigger, watch, teacherNames }:
                                     </div>
                                 )}
                             />
-
                         </div>
-
-
                     </div>
                 )}
             </div>

@@ -20,13 +20,15 @@ export const navigationData = {
           title: "Student Profile",
           url: "/student/student-details",
           permission: "view",
-          showForRoles: ["student"] // Only show for student role
+          showForRoles: ["student"], // Only show for student role
+          hideForRoles: ["teacher"] // Hide for teacher role
         },
         {
           title: "Dashboard",
           url: "/",
           permission: "view", 
-          showForRoles: ["student"] // Only show for student role
+          showForRoles: ["student"], // Only show for student role
+          hideForRoles: ["teacher"] // Hide for teacher role
         },
         // Admin/other roles items
         { 
@@ -42,22 +44,30 @@ export const navigationData = {
           hideForRoles: ["student"]
         },
         { 
+          title: "Edit Profile", 
+          url: "/student/edit-student",
+          permission: "edit",
+          showForRoles: ["student"] // Only show for student role
+        },
+        { 
           title: "All Students", 
           url: "/student/all-students",
           permission: "view",
-          hideForRoles: ["student"]
+          hideForRoles: ["student"],
+          showForRoles: ["teacher"] // Show for teacher role
         },
         {
           title: "Student Details",
           url: "/student/student-details",
           permission: "view",
-          hideForRoles: ["student"] 
+          hideForRoles: ["student", "teacher"] // Hide for student and teacher roles
         },
         {
           title: "Attendance",
           url: "/student/attendance",
           permission: "view",
-          hideForRoles: ["student"]
+          hideForRoles: ["student"],
+          showForRoles: ["teacher"] // Show for teacher role
         },
       ],
     },
@@ -66,12 +76,12 @@ export const navigationData = {
       url: "#",
       icon: GraduationCap,
       items: [
-        { title: "Add Teacher", url: "/teacher/add-teacher", permission: "add" },
+        { title: "Add Teacher", url: "/teacher/add-teacher", permission: "add", hideForRoles: ["teacher"] },
         // { title: "Edit Teacher", url: "/teacher/edit-teacher", permission: "edit" },
-        { title: "All Teachers", url: "/teacher/all-teachers", permission: "view" },
-        { title: "Teacher Dashboard", url: "/teacher/teacher-dashboard", permission: "view" },
-        { title: "Teacher Details", url: "/teacher/teacher-details", permission: "view" },
-        { title: "Attendance", url: "/teacher/attendance", permission: "view" },
+        { title: "All Teachers", url: "/teacher/all-teachers", permission: "view", hideForRoles: ["teacher"] },
+        { title: "Teacher Dashboard", url: "/teacher/teacher-dashboard", permission: "view", showForRoles: ["teacher"] },
+        { title: "Teacher Details", url: "/teacher/teacher-details", permission: "view", showForRoles: ["teacher"] },
+        { title: "Attendance", url: "/teacher/attendance", permission: "view", hideForRoles: ["teacher"] },
       ],
     },
     {
