@@ -85,7 +85,6 @@ const StudentDashboardContent: React.FC<StudentDashboardContentProps> = ({ initi
           <div className="col-span-12 md:col-span-4 space-y-6">
             <ScheduleSection />
             <HomeWorksSection />
-            <SyllabusSection />
           </div>
           
           {/* Notice Board Section - Now above Class Faculties */}
