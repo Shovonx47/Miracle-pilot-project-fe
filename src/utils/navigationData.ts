@@ -137,6 +137,11 @@ export const navigationData = {
           title: "Notifications", 
           url: "/human-resource/notifications", 
           permission: "view" 
+        },
+        { 
+          title: "Add Notices", 
+          url: "/human-resource/add-notices", 
+          permission: "view" 
         }
       ],
     },

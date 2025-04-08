@@ -1,33 +1,7 @@
-"use client";
+import { useGetAllNoticesQuery } from '@/redux/api/Notice/noticeApi';
 
 const NoticeBoardSection = () => {
-  const notices = [
-    {
-      title: "Exam Schedule Release",
-      date: "05 Feb 2025",
-      color: "bg-blue-200",
-    },
-    {
-      title: "Follow Up - Exam Preparation !",
-      date: "02 Feb 2025",
-      color: "bg-red-200",
-    },
-    {
-      title: "Updated Syllabus Instructions",
-      date: "11 Jan 2025",
-      color: "bg-red-200",
-    },
-    {
-      title: "Online Classes New Schedule",
-      date: "10 Jan 2025",
-      color: "bg-red-200",
-    },
-    {
-      title: "Sports Day Program....!!!",
-      date: "01 Jan 2025",
-      color: "bg-blue-200",
-    },
-  ];
+  const { data: notices = [], isLoading, error } = useGetAllNoticesQuery();
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
@@ -41,22 +15,38 @@ const NoticeBoardSection = () => {
         <div className="absolute left-2.5 top-0 h-full w-0.5 bg-gray-200" />
 
         {/* Notice items */}
-        <div className="space-y-6">
-          {notices.map((notice, index) => (
-            <div key={index} className="flex items-start gap-4">
-              {/* Timeline dot */}
-              <div className="relative">
-                <div className={`w-5 h-5 rounded-full ${notice.color} border-2 border-white ring-2 ring-gray-100`} />
-              </div>
+        {isLoading ? (
+          <div className="flex justify-center py-4">
+            <p>Loading notices...</p>
+          </div>
+        ) : error ? (
+          <div className="flex justify-center py-4 text-red-500">
+            <p>Error loading notices: {(error as any)?.data?.message || 'Failed to fetch notices'}</p>
+          </div>
+        ) : notices.length === 0 ? (
+          <div className="flex justify-center py-4 text-gray-500">
+            <p>No notices available</p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {notices.map((notice) => (
+              <div key={notice.id} className="flex items-start gap-4">
+                {/* Timeline dot */}
+                <div className="relative">
+                  <div
+                    className={`w-5 h-5 rounded-full ${notice.color} border-2 border-white ring-2 ring-gray-100`}
+                  />
+                </div>
 
-              {/* Content */}
-              <div className="flex-1 bg-gray-50 rounded p-3">
-                <h4 className="font-medium text-gray-900">{notice.title}</h4>
-                <p className="text-sm text-gray-500 mt-1">Added on : {notice.date}</p>
+                {/* Content */}
+                <div className="flex-1 bg-gray-50 rounded p-3">
+                  <h4 className="font-medium text-gray-900">{notice.title}</h4>
+                  <p className="text-sm text-gray-500 mt-1">Added on : {notice.date}</p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -19,7 +19,6 @@ import FeesCollectionChart from "@/components/Staff/Admin/Admin Dashboard/FeesCo
 import NavMenu from "@/components/Staff/Admin/Admin Dashboard/NavMenu";
 import NoticeBoard from "@/components/Staff/Admin/Admin Dashboard/NoticeBoard";
 import StudentActivity from "@/components/Staff/Admin/Admin Dashboard/StudentActivity";
-import TodoList from "@/components/Staff/Admin/Admin Dashboard/TodoList";
 
 export default function HrDashboard() {
   const userToken = useSelector((state: RootState) => state?.auth?.token);
@@ -122,9 +121,7 @@ export default function HrDashboard() {
         </div>
         
         {/* Todo List - Full width on mobile */}
-        <div className="w-full">
-          <TodoList />
-        </div>
+        
       </div>
     </div>
   );

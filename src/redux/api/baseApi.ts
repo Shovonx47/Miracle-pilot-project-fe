@@ -94,6 +94,7 @@ export const baseApi = createApi({
     "attendance",
     "forgot_password",
     "pendingRequest",
+    "notice",
   ],
   endpoints: () => ({}),
 });
